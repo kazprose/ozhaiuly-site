@@ -58,3 +58,15 @@ collections:
           - {label: "Тіл", value: "til"}
       - {label: "Оқу уақыты (мин)", name: "read_time", widget: "number", default: 10}
       - {label: "Мақала мәтіні", name: "body", widget: "markdown"}
+- name: "songs"
+    label: "🎵 Әндер"
+    folder: "content/songs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Ән атауы", name: "title", widget: "string"}
+      - {label: "Альбом", name: "album", widget: "string", required: false}
+      - {label: "Жылы", name: "year", widget: "number", default: 2024}
+      - {label: "Ұзақтығы (мысалы: 3:47)", name: "duration", widget: "string"}
+      - {label: "Аудио файл (MP3)", name: "audio", widget: "file", media_library: {allow_multiple: false}, required: false}
+      - {label: "Сипаттама", name: "body", widget: "markdown", required: false}
