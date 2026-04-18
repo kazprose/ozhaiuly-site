@@ -4,14 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админ панель | Ықылас Ожайұлы</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
-    window.netlifyIdentity && window.netlifyIdentity.setAPIEndpoint(
-      "https://ozhai.netlify.app/.netlify/identity"
-    );
+    // Netlify Identity endpoint
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.href = "/admin/";
+          });
+        }
+      });
+    }
   </script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
+  <script>
+    window.CMS_MANUAL_INIT = true;
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    CMS.init({
+      config: {
+        backend: {
+          name: 'git-gateway',
+          branch: 'main',
+          identity_url: 'https://ozhai.netlify.app/.netlify/identity',
+          gateway_url: 'https://ozhai.netlify.app/.netlify/git',
+        }
+      }
+    });
+  </script>
 </body>
 </html>
