@@ -7,11 +7,50 @@ public_folder: "/images/uploads"
 
 collections:
   - name: "poems"
-    label: "Өлеңдер"
+    label: "🖊 Өлеңдер"
     folder: "content/poems"
     create: true
     slug: "{{slug}}"
     fields:
       - {label: "Атауы", name: "title", widget: "string"}
-      - {label: "Жылы", name: "year", widget: "number"}
-      - {label: "Мәтін", name: "body", widget: "markdown"}
+      - label: "Санат"
+        name: "category"
+        widget: "select"
+        options:
+          - {label: "Лирика", value: "lirika"}
+          - {label: "Философия", value: "filosofia"}
+          - {label: "Тарихи", value: "tarihi"}
+          - {label: "Табиғат", value: "tabigat"}
+      - {label: "Жылы", name: "year", widget: "number", default: 2024}
+      - {label: "Өлең мәтіні", name: "body", widget: "markdown"}
+
+  - name: "songs"
+    label: "🎵 Әндер"
+    folder: "content/songs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Ән атауы", name: "title", widget: "string"}
+      - {label: "Альбом", name: "album", widget: "string", required: false}
+      - {label: "Жылы", name: "year", widget: "number", default: 2024}
+      - {label: "Ұзақтығы (мысалы: 3:47)", name: "duration", widget: "string"}
+      - {label: "Сипаттама", name: "body", widget: "markdown", required: false}
+
+  - name: "research"
+    label: "📚 Зерттеулер"
+    folder: "content/research"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Тақырып", name: "title", widget: "string"}
+      - label: "Тег"
+        name: "tag"
+        widget: "select"
+        options:
+          - {label: "Алаш", value: "alash"}
+          - {label: "Өнер", value: "oner"}
+          - {label: "Тарих", value: "tarih"}
+          - {label: "Мәдениет", value: "madeniyet"}
+          - {label: "Тіл", value: "til"}
+      - {label: "Оқу уақыты (мин)", name: "read_time", widget: "number", default: 10}
+      - {label: "Мақала мәтіні", name: "body", widget: "markdown"}
