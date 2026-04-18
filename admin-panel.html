@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ықылас Ожайұлы — Басқару панелі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0b07;--bg2:#13110c;--bg3:#1a1710;--surface:#211e16;--surface2:#2a2518;
+  --gold:#c9a84c;--gold2:#e8c97a;--sand:#d4c5a0;--sand2:#a89878;
+  --text:#f0e8d5;--text2:#b5a882;--text3:#7a6e58;
+  --border:rgba(201,168,76,0.2);--border2:rgba(201,168,76,0.35);
+  --red:#e05a5a;--green:#5a9e6f;
+  --serif:'Cormorant Garamond',serif;--sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:0}
+.login-box{width:100%;max-width:420px;padding:0 24px}
+.login-logo{font-family:var(--serif);font-size:28px;color:var(--gold);letter-spacing:3px;font-weight:300;text-align:center;margin-bottom:8px}
+.login-sub{font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:48px}
+.login-ornament{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.orn-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.orn-diamond{width:6px;height:6px;background:var(--gold);transform:rotate(45deg)}
+.field-label{font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;display:block}
+.field-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 16px;font-family:var(--sans);font-size:14px;outline:none;transition:border-color 0.3s;margin-bottom:16px;border-radius:0}
+.field-input:focus{border-color:var(--gold)}
+.field-input::placeholder{color:var(--text3)}
+.login-hint{font-size:12px;color:var(--text3);margin-bottom:24px;line-height:1.6;padding:12px 16px;background:var(--surface);border-left:2px solid var(--gold)}
+.login-hint a{color:var(--gold)}
+.btn-full{width:100%;padding:14px;background:var(--gold);color:var(--bg);font-size:12px;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;font-family:var(--sans);font-weight:500;transition:all 0.3s}
+.btn-full:hover{background:var(--gold2)}
+.login-error{color:var(--red);font-size:12px;text-align:center;margin-top:12px;display:none}
+
+/* LAYOUT */
+#app{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo-text{font-family:var(--serif);font-size:16px;color:var(--gold);letter-spacing:2px;font-weight:300;line-height:1.3}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.sidebar-nav{padding:16px 0;flex:1}
+.nav-section{padding:8px 16px 4px;font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;transition:all 0.2s;color:var(--text2);font-size:13px;letter-spacing:0.5px;border-left:2px solid transparent}
+.nav-item:hover{background:rgba(201,168,76,0.06);color:var(--gold)}
+.nav-item.active{background:rgba(201,168,76,0.1);color:var(--gold);border-left-color:var(--gold)}
+.nav-icon{font-size:14px;width:18px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--surface2);color:var(--text3);font-size:10px;padding:2px 6px;border-radius:10px}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
+.logout-btn{width:100%;padding:8px 16px;background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;letter-spacing:1px;cursor:pointer;font-family:var(--sans);transition:all 0.3s;text-transform:uppercase}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+.main{margin-left:240px;min-height:100vh;padding:32px 40px}
+
+/* HEADER */
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-title{font-family:var(--serif);font-size:32px;color:var(--text);font-weight:300}
+.page-title em{color:var(--gold);font-style:italic}
+.header-actions{display:flex;gap:12px}
+.btn-primary{padding:10px 24px;background:var(--gold);color:var(--bg);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;font-family:var(--sans);font-weight:500;transition:all 0.3s}
+.btn-primary:hover{background:var(--gold2)}
+.btn-outline{padding:10px 24px;background:transparent;color:var(--gold);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--gold);cursor:pointer;font-family:var(--sans);transition:all 0.3s}
+.btn-outline:hover{background:rgba(201,168,76,0.1)}
+.btn-danger{padding:8px 16px;background:transparent;color:var(--red);font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(224,90,90,0.3);cursor:pointer;font-family:var(--sans);transition:all 0.3s}
+.btn-danger:hover{background:rgba(224,90,90,0.1)}
+.btn-sm{padding:6px 14px;font-size:11px}
+
+/* DASHBOARD */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
+.stat-card{background:var(--surface);padding:24px;border:1px solid var(--border);transition:border-color 0.3s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card-num{font-family:var(--serif);font-size:40px;color:var(--gold);font-weight:300;line-height:1}
+.stat-card-label{font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px}
+.stat-card-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.recent-section{margin-top:8px}
+.recent-title{font-size:11px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px}
+.recent-list{display:flex;flex-direction:column;gap:8px}
+.recent-item{background:var(--surface);padding:14px 18px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all 0.2s}
+.recent-item:hover{border-color:var(--border2);background:var(--surface2)}
+.recent-item-title{font-size:14px;color:var(--text)}
+.recent-item-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.recent-item-tag{font-size:10px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;padding:2px 8px;border:1px solid rgba(201,168,76,0.3)}
+
+/* TABLE */
+.content-table{width:100%;border-collapse:collapse}
+.content-table th{text-align:left;padding:10px 16px;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);font-weight:400}
+.content-table td{padding:14px 16px;border-bottom:1px solid rgba(201,168,76,0.08);font-size:13px;color:var(--text2);vertical-align:middle}
+.content-table tr:hover td{background:rgba(201,168,76,0.04);color:var(--text)}
+.content-table .td-title{color:var(--text);font-size:14px}
+.tag-pill{display:inline-block;font-size:10px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;padding:2px 10px;border:1px solid rgba(201,168,76,0.3)}
+.action-btns{display:flex;gap:8px}
+
+/* FORM */
+.form-panel{background:var(--surface);border:1px solid var(--border);padding:32px;max-width:800px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-group{margin-bottom:20px}
+.form-group.full{grid-column:span 2}
+.form-label{display:block;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:var(--sans);font-size:14px;outline:none;transition:border-color 0.3s;border-radius:0}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--text3)}
+.form-select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:var(--sans);font-size:14px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-select option{background:var(--bg3)}
+.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:var(--serif);font-size:15px;outline:none;transition:border-color 0.3s;resize:vertical;min-height:200px;line-height:1.9;border-radius:0}
+.form-textarea:focus{border-color:var(--gold)}
+.form-textarea::placeholder{color:var(--text3)}
+.form-actions{display:flex;gap:12px;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;right:32px;padding:14px 20px;font-size:13px;border-radius:0;z-index:9999;display:none;gap:10px;align-items:center;border-left:3px solid;max-width:320px}
+.toast.success{background:rgba(90,158,111,0.15);border-color:var(--green);color:#8fd4a8;display:flex}
+.toast.error{background:rgba(224,90,90,0.15);border-color:var(--red);color:#f0a0a0;display:flex}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;color:var(--text3);font-size:13px;gap:12px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:64px 32px;color:var(--text3)}
+.empty-icon{font-family:var(--serif);font-size:48px;color:var(--gold);opacity:0.3;margin-bottom:16px}
+.empty-text{font-size:14px;margin-bottom:20px}
+
+/* MODAL CONFIRM */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,4,2,0.85);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);padding:32px;max-width:400px;width:90%}
+.modal-title{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:12px}
+.modal-text{font-size:13px;color:var(--text3);margin-bottom:24px;line-height:1.6}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:28px}
+.tab{padding:10px 20px;background:none;border:none;color:var(--text3);font-size:12px;letter-spacing:1.5px;cursor:pointer;font-family:var(--sans);transition:all 0.3s;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase}
+.tab.active,.tab:hover{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* SEARCH BAR */
+.search-bar{display:flex;gap:12px;margin-bottom:24px;align-items:center}
+.search-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 14px;font-family:var(--sans);font-size:13px;outline:none;transition:border-color 0.3s;max-width:320px}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--text3)}
+.items-count{font-size:12px;color:var(--text3);margin-left:auto}
+
+/* FILE INPUT */
+.file-input-wrap{position:relative}
+.file-input-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-input-btn{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:13px;text-align:left;cursor:pointer;transition:border-color 0.3s}
+.file-input-btn:hover,.file-input-wrap:hover .file-input-btn{border-color:var(--gold)}
+
+@media(max-width:768px){
+  .sidebar{width:200px}
+  .main{margin-left:200px;padding:24px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Ықылас Ожайұлы</div>
+    <div class="login-sub">Басқару панелі</div>
+    <div class="login-ornament"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
+    <label class="field-label">Пайдаланушы аты</label>
+    <input class="field-input" id="loginUser" type="text" placeholder="admin" autocomplete="username">
+    <label class="field-label">GitHub Token</label>
+    <input class="field-input" id="loginToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="current-password">
+    <div class="login-hint">
+      GitHub Personal Access Token — <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> сайтынан алыңыз. <strong>repo</strong> рұқсаты болуы керек.
+    </div>
+    <button class="btn-full" onclick="doLogin()">Кіру →</button>
+    <div class="login-error" id="loginError">Token немесе пайдаланушы аты қате</div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">Жоюды растаңыз</div>
+    <div class="modal-text" id="confirmText">Бұл әрекетті кері қайтару мүмкін емес.</div>
+    <div class="modal-actions">
+      <button class="btn-outline btn-sm" onclick="closeConfirm()">Болдырмау</button>
+      <button class="btn-danger" id="confirmBtn" onclick="confirmAction()">Жою</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Ықылас Ожайұлы</div>
+      <div class="sidebar-logo-sub">Басқару панелі</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Негізгі</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <span class="nav-icon">◈</span> Басты бет
+      </div>
+      <div class="nav-section">Мазмұн</div>
+      <div class="nav-item" onclick="showPage('poems')">
+        <span class="nav-icon">✦</span> Өлеңдер
+        <span class="nav-badge" id="poemsBadge">—</span>
+      </div>
+      <div class="nav-item" onclick="showPage('songs')">
+        <span class="nav-icon">♪</span> Әндер
+        <span class="nav-badge" id="songsBadge">—</span>
+      </div>
+      <div class="nav-item" onclick="showPage('research')">
+        <span class="nav-icon">❧</span> Зерттеулер
+        <span class="nav-badge" id="researchBadge">—</span>
+      </div>
+      <div class="nav-section">Сайт</div>
+      <div class="nav-item" onclick="window.open('https://ozhaiuly.kz','_blank')">
+        <span class="nav-icon">↗</span> Сайтты ашу
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">Шығу</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Басты <em>бет</em></h1>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-num" id="stat-poems">—</div>
+          <div class="stat-card-label">Өлеңдер</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num" id="stat-songs">—</div>
+          <div class="stat-card-label">Әндер</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num" id="stat-research">—</div>
+          <div class="stat-card-label">Зерттеулер</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num">✓</div>
+          <div class="stat-card-label">Сайт белсенді</div>
+          <div class="stat-card-sub">ozhaiuly.kz</div>
+        </div>
+      </div>
+      <div class="recent-section">
+        <div class="recent-title">Соңғы қосылғандар</div>
+        <div class="recent-list" id="recentList">
+          <div class="loading"><div class="spinner"></div> Жүктелуде...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POEMS LIST -->
+    <div id="page-poems" style="display:none">
+      <div id="poems-list-view">
+        <div class="page-header">
+          <h1 class="page-title">Өлеңдер</h1>
+          <div class="header-actions">
+            <button class="btn-primary" onclick="showPoemForm()">+ Жаңа өлең</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" placeholder="Өлең іздеу..." oninput="filterTable('poemsTableBody', this.value)">
+          <span class="items-count" id="poemsCount"></span>
+        </div>
+        <table class="content-table">
+          <thead>
+            <tr>
+              <th>Атауы</th><th>Санат</th><th>Жылы</th><th>Әрекет</th>
+            </tr>
+          </thead>
+          <tbody id="poemsTableBody">
+            <tr><td colspan="4"><div class="loading"><div class="spinner"></div> Жүктелуде...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="poems-form-view" style="display:none">
+        <div class="page-header">
+          <h1 class="page-title" id="poemFormTitle">Жаңа <em>өлең</em></h1>
+          <button class="btn-outline" onclick="showPoemsList()">← Тізімге</button>
+        </div>
+        <div class="form-panel">
+          <input type="hidden" id="poemEditPath">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Өлең атауы *</label>
+              <input class="form-input" id="poemTitle" placeholder="Дала жыры">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Жылы *</label>
+              <input class="form-input" id="poemYear" type="number" placeholder="2024" value="2024">
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Санат</label>
+              <select class="form-select" id="poemCategory">
+                <option value="lirika">Лирика</option>
+                <option value="filosofia">Философия</option>
+                <option value="tarihi">Тарихи</option>
+                <option value="tabigat">Табиғат</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Өлең мәтіні *</label>
+              <textarea class="form-textarea" id="poemContent" placeholder="Өлеңді осында жазыңыз...
+Әр жол жаңа жолдан басталуы керек.
+Шумақтар арасында бос жол қалдырыңыз."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="savePoem()">Сақтау</button>
+            <button class="btn-outline" onclick="showPoemsList()">Болдырмау</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SONGS LIST -->
+    <div id="page-songs" style="display:none">
+      <div id="songs-list-view">
+        <div class="page-header">
+          <h1 class="page-title">Әндер</h1>
+          <div class="header-actions">
+            <button class="btn-primary" onclick="showSongForm()">+ Жаңа ән</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" placeholder="Ән іздеу..." oninput="filterTable('songsTableBody', this.value)">
+          <span class="items-count" id="songsCount"></span>
+        </div>
+        <table class="content-table">
+          <thead>
+            <tr><th>Атауы</th><th>Альбом</th><th>Жылы</th><th>Ұзақтығы</th><th>Әрекет</th></tr>
+          </thead>
+          <tbody id="songsTableBody">
+            <tr><td colspan="5"><div class="loading"><div class="spinner"></div> Жүктелуде...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="songs-form-view" style="display:none">
+        <div class="page-header">
+          <h1 class="page-title" id="songFormTitle">Жаңа <em>ән</em></h1>
+          <button class="btn-outline" onclick="showSongsList()">← Тізімге</button>
+        </div>
+        <div class="form-panel">
+          <input type="hidden" id="songEditPath">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Ән атауы *</label>
+              <input class="form-input" id="songTitle" placeholder="Дала желі">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Жылы</label>
+              <input class="form-input" id="songYear" type="number" placeholder="2024" value="2024">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Альбом</label>
+              <input class="form-input" id="songAlbum" placeholder="Дала сазы">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ұзақтығы</label>
+              <input class="form-input" id="songDuration" placeholder="3:47">
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Аудио файл жолы (GitHub-тағы)</label>
+              <input class="form-input" id="songAudio" placeholder="/audio/dala-zhely.mp3">
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">Аудио файлды GitHub-тағы /audio/ қалтасына жүктеп, жолын осында жазыңыз</div>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Сипаттама (міндетті емес)</label>
+              <textarea class="form-textarea" id="songDesc" placeholder="Ән туралы қысқаша..." style="min-height:100px"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="saveSong()">Сақтау</button>
+            <button class="btn-outline" onclick="showSongsList()">Болдырмау</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESEARCH LIST -->
+    <div id="page-research" style="display:none">
+      <div id="research-list-view">
+        <div class="page-header">
+          <h1 class="page-title">Зерттеулер</h1>
+          <div class="header-actions">
+            <button class="btn-primary" onclick="showResearchForm()">+ Жаңа зерттеу</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" placeholder="Зерттеу іздеу..." oninput="filterTable('researchTableBody', this.value)">
+          <span class="items-count" id="researchCount"></span>
+        </div>
+        <table class="content-table">
+          <thead>
+            <tr><th>Тақырып</th><th>Тег</th><th>Оқу уақыты</th><th>Әрекет</th></tr>
+          </thead>
+          <tbody id="researchTableBody">
+            <tr><td colspan="4"><div class="loading"><div class="spinner"></div> Жүктелуде...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="research-form-view" style="display:none">
+        <div class="page-header">
+          <h1 class="page-title" id="researchFormTitle">Жаңа <em>зерттеу</em></h1>
+          <button class="btn-outline" onclick="showResearchList()">← Тізімге</button>
+        </div>
+        <div class="form-panel">
+          <input type="hidden" id="researchEditPath">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Тақырып *</label>
+              <input class="form-input" id="researchTitle" placeholder="Алаш қозғалысының рухани мұрасы">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тег</label>
+              <select class="form-select" id="researchTag">
+                <option value="alash">Алаш</option>
+                <option value="oner">Өнер</option>
+                <option value="tarih">Тарих</option>
+                <option value="madeniyet">Мәдениет</option>
+                <option value="til">Тіл</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Оқу уақыты (мин)</label>
+              <input class="form-input" id="researchReadTime" type="number" placeholder="10" value="10">
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Мақала мәтіні *</label>
+              <textarea class="form-textarea" id="researchContent" placeholder="Мақала мәтінін осында жазыңыз..." style="min-height:300px"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="saveResearch()">Сақтау</button>
+            <button class="btn-outline" onclick="showResearchList()">Болдырмау</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const REPO = 'kazprose/ozhaiuly-site';
+const BRANCH = 'main';
+let GH_TOKEN = '';
+let GH_USER = '';
+let pendingDelete = null;
+
+// ===== AUTH =====
+function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const token = document.getElementById('loginToken').value.trim();
+  if (!token || !user) { showLoginError('Барлық өрістерді толтырыңыз'); return; }
+  GH_TOKEN = token;
+  GH_USER = user;
+  localStorage.setItem('cms_token', token);
+  localStorage.setItem('cms_user', user);
+  startApp();
+}
+
+function doLogout() {
+  localStorage.removeItem('cms_token');
+  localStorage.removeItem('cms_user');
+  GH_TOKEN = ''; GH_USER = '';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// Auto-login
+window.addEventListener('DOMContentLoaded', () => {
+  const t = localStorage.getItem('cms_token');
+  const u = localStorage.getItem('cms_user');
+  if (t && u) {
+    GH_TOKEN = t; GH_USER = u;
+    startApp();
+  }
+  document.getElementById('loginToken').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+function startApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadAllData();
+}
+
+// ===== GITHUB API =====
+async function ghFetch(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      'Authorization': 'token ' + GH_TOKEN,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch('https://api.github.com/' + path, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || res.statusText);
+  }
+  if (method === 'DELETE') return null;
+  return res.json();
+}
+
+async function getFiles(folder) {
+  try {
+    const files = await ghFetch(`repos/${REPO}/contents/${folder}?ref=${BRANCH}`);
+    if (!Array.isArray(files)) return [];
+    const items = await Promise.all(files.filter(f => f.name.endsWith('.md')).map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
+      const meta = { _path: f.path, _sha: f.sha };
+      const parts = txt.split('---').filter(Boolean);
+      parts[0].trim().split('\n').forEach(line => {
+        const [k, ...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
+      });
+      meta._body = (parts[1] || '').trim();
+      return meta;
+    }));
+    return items;
+  } catch(e) { return []; }
+}
+
+async function saveFile(path, content, sha = null) {
+  const body = {
+    message: sha ? `Update: ${path}` : `Add: ${path}`,
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: BRANCH
+  };
+  if (sha) body.sha = sha;
+  return ghFetch(`repos/${REPO}/contents/${path}`, 'PUT', body);
+}
+
+async function deleteFile(path, sha) {
+  return ghFetch(`repos/${REPO}/contents/${path}`, 'DELETE', {
+    message: `Delete: ${path}`,
+    sha,
+    branch: BRANCH
+  });
+}
+
+async function getFileSha(path) {
+  try {
+    const data = await ghFetch(`repos/${REPO}/contents/${path}?ref=${BRANCH}`);
+    return data.sha;
+  } catch(e) { return null; }
+}
+
+// ===== SLUG =====
+function toSlug(str) {
+  return str.toLowerCase()
+    .replace(/ғ/g,'g').replace(/қ/g,'k').replace(/ң/g,'n')
+    .replace(/ү/g,'u').replace(/ұ/g,'u').replace(/ө/g,'o')
+    .replace(/ә/g,'a').replace(/і/g,'i').replace(/ш/g,'sh')
+    .replace(/щ/g,'sh').replace(/ч/g,'ch').replace(/ж/g,'zh')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+// ===== FRONTMATTER =====
+function makeFrontmatter(fields) {
+  const fm = Object.entries(fields).map(([k,v]) => `${k}: "${v}"`).join('\n');
+  return `---\n${fm}\n---\n\n`;
+}
+
+// ===== DATA =====
+let poemsData = [], songsData = [], researchData = [];
+
+async function loadAllData() {
+  [poemsData, songsData, researchData] = await Promise.all([
+    getFiles('content/poems'),
+    getFiles('content/songs'),
+    getFiles('content/research')
+  ]);
+  updateBadges();
+  renderDashboard();
+  renderPoemsTable();
+  renderSongsTable();
+  renderResearchTable();
+}
+
+function updateBadges() {
+  document.getElementById('poemsBadge').textContent = poemsData.length;
+  document.getElementById('songsBadge').textContent = songsData.length;
+  document.getElementById('researchBadge').textContent = researchData.length;
+  document.getElementById('stat-poems').textContent = poemsData.length;
+  document.getElementById('stat-songs').textContent = songsData.length;
+  document.getElementById('stat-research').textContent = researchData.length;
+}
+
+function renderDashboard() {
+  const all = [
+    ...poemsData.map(p => ({...p, _type:'Өлең'})),
+    ...songsData.map(s => ({...s, _type:'Ән'})),
+    ...researchData.map(r => ({...r, _type:'Зерттеу'}))
+  ].slice(0, 5);
+
+  const list = document.getElementById('recentList');
+  if (!all.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">◈</div><div class="empty-text">Мазмұн әлі қосылмаған</div></div>';
+    return;
+  }
+  list.innerHTML = all.map(item => `
+    <div class="recent-item">
+      <div>
+        <div class="recent-item-title">${item.title || item._path}</div>
+        <div class="recent-item-meta">${item.year || ''}</div>
+      </div>
+      <span class="recent-item-tag">${item._type}</span>
+    </div>`).join('');
+}
+
+// ===== POEMS TABLE =====
+function renderPoemsTable() {
+  const tbody = document.getElementById('poemsTableBody');
+  document.getElementById('poemsCount').textContent = poemsData.length + ' өлең';
+  if (!poemsData.length) {
+    tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">✦</div><div class="empty-text">Өлеңдер қосылмаған</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = poemsData.map(p => `
+    <tr>
+      <td class="td-title">${p.title || '—'}</td>
+      <td><span class="tag-pill">${p.category || '—'}</span></td>
+      <td>${p.year || '—'}</td>
+      <td><div class="action-btns">
+        <button class="btn-outline btn-sm" onclick="editPoem('${p._path}')">Өзгерту</button>
+        <button class="btn-danger" onclick="askDelete('${p._path}','${p._sha}','${p.title}')">Жою</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function showPoemForm(poem = null) {
+  document.getElementById('poems-list-view').style.display = 'none';
+  document.getElementById('poems-form-view').style.display = 'block';
+  if (poem) {
+    document.getElementById('poemFormTitle').innerHTML = 'Өлеңді <em>өзгерту</em>';
+    document.getElementById('poemEditPath').value = poem._path;
+    document.getElementById('poemTitle').value = poem.title || '';
+    document.getElementById('poemYear').value = poem.year || 2024;
+    document.getElementById('poemCategory').value = poem.category || 'lirika';
+    document.getElementById('poemContent').value = poem._body || '';
+  } else {
+    document.getElementById('poemFormTitle').innerHTML = 'Жаңа <em>өлең</em>';
+    document.getElementById('poemEditPath').value = '';
+    document.getElementById('poemTitle').value = '';
+    document.getElementById('poemYear').value = 2024;
+    document.getElementById('poemCategory').value = 'lirika';
+    document.getElementById('poemContent').value = '';
+  }
+}
+
+function showPoemsList() {
+  document.getElementById('poems-list-view').style.display = 'block';
+  document.getElementById('poems-form-view').style.display = 'none';
+}
+
+function editPoem(path) {
+  const poem = poemsData.find(p => p._path === path);
+  if (poem) showPoemForm(poem);
+}
+
+async function savePoem() {
+  const title = document.getElementById('poemTitle').value.trim();
+  const year = document.getElementById('poemYear').value.trim();
+  const category = document.getElementById('poemCategory').value;
+  const content = document.getElementById('poemContent').value.trim();
+  const editPath = document.getElementById('poemEditPath').value;
+
+  if (!title || !content) { showToast('Атауы мен мәтін міндетті!', 'error'); return; }
+
+  const fm = makeFrontmatter({ title, year, category });
+  const fileContent = fm + content;
+  const path = editPath || `content/poems/${toSlug(title)}.md`;
+  const sha = editPath ? await getFileSha(path) : null;
+
+  try {
+    await saveFile(path, fileContent, sha);
+    showToast('Өлең сақталды! ✓', 'success');
+    await loadAllData();
+    showPoemsList();
+  } catch(e) {
+    showToast('Қате: ' + e.message, 'error');
+  }
+}
+
+// ===== SONGS TABLE =====
+function renderSongsTable() {
+  const tbody = document.getElementById('songsTableBody');
+  document.getElementById('songsCount').textContent = songsData.length + ' ән';
+  if (!songsData.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">♪</div><div class="empty-text">Әндер қосылмаған</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = songsData.map(s => `
+    <tr>
+      <td class="td-title">${s.title || '—'}</td>
+      <td>${s.album || '—'}</td>
+      <td>${s.year || '—'}</td>
+      <td>${s.duration || '—'}</td>
+      <td><div class="action-btns">
+        <button class="btn-outline btn-sm" onclick="editSong('${s._path}')">Өзгерту</button>
+        <button class="btn-danger" onclick="askDelete('${s._path}','${s._sha}','${s.title}')">Жою</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function showSongForm(song = null) {
+  document.getElementById('songs-list-view').style.display = 'none';
+  document.getElementById('songs-form-view').style.display = 'block';
+  if (song) {
+    document.getElementById('songFormTitle').innerHTML = 'Ән <em>мәліметтері</em>';
+    document.getElementById('songEditPath').value = song._path;
+    document.getElementById('songTitle').value = song.title || '';
+    document.getElementById('songYear').value = song.year || 2024;
+    document.getElementById('songAlbum').value = song.album || '';
+    document.getElementById('songDuration').value = song.duration || '';
+    document.getElementById('songAudio').value = song.audio || '';
+    document.getElementById('songDesc').value = song._body || '';
+  } else {
+    document.getElementById('songFormTitle').innerHTML = 'Жаңа <em>ән</em>';
+    document.getElementById('songEditPath').value = '';
+    document.getElementById('songTitle').value = '';
+    document.getElementById('songYear').value = 2024;
+    document.getElementById('songAlbum').value = '';
+    document.getElementById('songDuration').value = '';
+    document.getElementById('songAudio').value = '';
+    document.getElementById('songDesc').value = '';
+  }
+}
+
+function showSongsList() {
+  document.getElementById('songs-list-view').style.display = 'block';
+  document.getElementById('songs-form-view').style.display = 'none';
+}
+
+function editSong(path) {
+  const song = songsData.find(s => s._path === path);
+  if (song) showSongForm(song);
+}
+
+async function saveSong() {
+  const title = document.getElementById('songTitle').value.trim();
+  const year = document.getElementById('songYear').value.trim();
+  const album = document.getElementById('songAlbum').value.trim();
+  const duration = document.getElementById('songDuration').value.trim();
+  const audio = document.getElementById('songAudio').value.trim();
+  const desc = document.getElementById('songDesc').value.trim();
+  const editPath = document.getElementById('songEditPath').value;
+
+  if (!title) { showToast('Ән атауы міндетті!', 'error'); return; }
+
+  const fields = { title, year };
+  if (album) fields.album = album;
+  if (duration) fields.duration = duration;
+  if (audio) fields.audio = audio;
+
+  const fm = makeFrontmatter(fields);
+  const fileContent = fm + (desc || '');
+  const path = editPath || `content/songs/${toSlug(title)}.md`;
+  const sha = editPath ? await getFileSha(path) : null;
+
+  try {
+    await saveFile(path, fileContent, sha);
+    showToast('Ән сақталды! ✓', 'success');
+    await loadAllData();
+    showSongsList();
+  } catch(e) {
+    showToast('Қате: ' + e.message, 'error');
+  }
+}
+
+// ===== RESEARCH TABLE =====
+function renderResearchTable() {
+  const tbody = document.getElementById('researchTableBody');
+  document.getElementById('researchCount').textContent = researchData.length + ' мақала';
+  if (!researchData.length) {
+    tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">❧</div><div class="empty-text">Зерттеулер қосылмаған</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = researchData.map(r => `
+    <tr>
+      <td class="td-title">${r.title || '—'}</td>
+      <td><span class="tag-pill">${r.tag || '—'}</span></td>
+      <td>${r.read_time || '—'} мин</td>
+      <td><div class="action-btns">
+        <button class="btn-outline btn-sm" onclick="editResearch('${r._path}')">Өзгерту</button>
+        <button class="btn-danger" onclick="askDelete('${r._path}','${r._sha}','${r.title}')">Жою</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function showResearchForm(research = null) {
+  document.getElementById('research-list-view').style.display = 'none';
+  document.getElementById('research-form-view').style.display = 'block';
+  if (research) {
+    document.getElementById('researchFormTitle').innerHTML = 'Зерттеуді <em>өзгерту</em>';
+    document.getElementById('researchEditPath').value = research._path;
+    document.getElementById('researchTitle').value = research.title || '';
+    document.getElementById('researchTag').value = research.tag || 'alash';
+    document.getElementById('researchReadTime').value = research.read_time || 10;
+    document.getElementById('researchContent').value = research._body || '';
+  } else {
+    document.getElementById('researchFormTitle').innerHTML = 'Жаңа <em>зерттеу</em>';
+    document.getElementById('researchEditPath').value = '';
+    document.getElementById('researchTitle').value = '';
+    document.getElementById('researchTag').value = 'alash';
+    document.getElementById('researchReadTime').value = 10;
+    document.getElementById('researchContent').value = '';
+  }
+}
+
+function showResearchList() {
+  document.getElementById('research-list-view').style.display = 'block';
+  document.getElementById('research-form-view').style.display = 'none';
+}
+
+function editResearch(path) {
+  const r = researchData.find(x => x._path === path);
+  if (r) showResearchForm(r);
+}
+
+async function saveResearch() {
+  const title = document.getElementById('researchTitle').value.trim();
+  const tag = document.getElementById('researchTag').value;
+  const readTime = document.getElementById('researchReadTime').value;
+  const content = document.getElementById('researchContent').value.trim();
+  const editPath = document.getElementById('researchEditPath').value;
+
+  if (!title || !content) { showToast('Тақырып пен мәтін міндетті!', 'error'); return; }
+
+  const fm = makeFrontmatter({ title, tag, read_time: readTime });
+  const fileContent = fm + content;
+  const path = editPath || `content/research/${toSlug(title)}.md`;
+  const sha = editPath ? await getFileSha(path) : null;
+
+  try {
+    await saveFile(path, fileContent, sha);
+    showToast('Зерттеу сақталды! ✓', 'success');
+    await loadAllData();
+    showResearchList();
+  } catch(e) {
+    showToast('Қате: ' + e.message, 'error');
+  }
+}
+
+// ===== DELETE =====
+function askDelete(path, sha, title) {
+  pendingDelete = { path, sha };
+  document.getElementById('confirmTitle').textContent = '«' + title + '» жоюды растаңыз';
+  document.getElementById('confirmText').textContent = 'Бұл файл GitHub-тан мүлдем өшіріледі. Кері қайтару мүмкін емес.';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function closeConfirm() {
+  document.getElementById('confirmModal').classList.remove('open');
+  pendingDelete = null;
+}
+
+async function confirmAction() {
+  if (!pendingDelete) return;
+  try {
+    await deleteFile(pendingDelete.path, pendingDelete.sha);
+    showToast('Жойылды ✓', 'success');
+    closeConfirm();
+    await loadAllData();
+  } catch(e) {
+    showToast('Қате: ' + e.message, 'error');
+    closeConfirm();
+  }
+}
+
+// ===== UI HELPERS =====
+function showPage(name) {
+  ['dashboard','poems','songs','research'].forEach(p => {
+    document.getElementById('page-' + p).style.display = p === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function filterTable(tbodyId, query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#' + tbodyId + ' tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.className = 'toast'; }, 3500);
+}
+
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirm();
+});
+</script>
+</body>
+</html>
