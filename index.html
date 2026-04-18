@@ -779,8 +779,7 @@ async function loadPoemsFromGitHub() {
     const grid = document.getElementById('poemsGrid');
     if (!grid) return;
     grid.innerHTML = poems.map(p => `
-      <div class="poem-card" data-category="${p.category || ''}">
-        <div class="poem-cat">${p.category || 'лирика'}</div>
+<div class="poem-card" data-category="${p.category || ''}" onclick="openPoemPage(this)" data-content="${encodeURIComponent(p.content)}" data-title="${encodeURIComponent(p.title||'')}" data-year="${p.year||''}" data-cat="${p.category||''}">        <div class="poem-cat">${p.category || 'лирика'}</div>
         <div class="poem-title">${p.title || ''}</div>
         <div class="poem-excerpt">${p.content.split('\n').slice(0,2).join('<br>')}</div>
         <div class="poem-meta">
@@ -793,7 +792,21 @@ async function loadPoemsFromGitHub() {
     renderPoems();
   }
 }
+function openPoemPage(card) {
+  const title   = decodeURIComponent(card.dataset.title);
+  const content = decodeURIComponent(card.dataset.content);
+  const year    = card.dataset.year;
+  const cat     = card.dataset.cat;
 
+  document.getElementById('readerContent').innerHTML = `
+    <div class="reader-cat">${cat}</div>
+    <h1 class="reader-title">${title}</h1>
+    <div class="reader-year">${year} · Ықылас Ожайұлы</div>
+    <div class="reader-poem"><div class="stanza">${content.replace(/\n/g,'<br>')}</div></div>
+  `;
+  document.getElementById('readerModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 loadPoemsFromGitHub();
 renderTracks();
 renderArticles();
