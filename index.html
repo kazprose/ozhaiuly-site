@@ -753,7 +753,48 @@ window.addEventListener('scroll',()=>{
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReader()});
 
-renderPoems();
+// GitHub API арқылы нақты өлеңдерді жүктеу
+async function loadPoemsFromGitHub() {
+  try {
+    const res = await fetch(
+      'https://api.github.com/repos/kazprose/ozhaiuly-site/contents/content/poems'
+    );
+    if (!res.ok) { renderPoems(); return; }
+    const files = await res.json();
+    if (!files.length) { renderPoems(); return; }
+
+    const poems = await Promise.all(files.map(async file => {
+      const r = await fetch(file.download_url);
+      const text = await r.text();
+      const meta = {};
+      const parts = text.split('---').filter(Boolean);
+      parts[0].trim().split('\n').forEach(line => {
+        const [k, ...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
+      });
+      meta.content = (parts[1] || '').trim();
+      return meta;
+    }));
+
+    const grid = document.getElementById('poemsGrid');
+    if (!grid) return;
+    grid.innerHTML = poems.map(p => `
+      <div class="poem-card" data-category="${p.category || ''}">
+        <div class="poem-cat">${p.category || 'лирика'}</div>
+        <div class="poem-title">${p.title || ''}</div>
+        <div class="poem-excerpt">${p.content.split('\n').slice(0,2).join('<br>')}</div>
+        <div class="poem-meta">
+          <span class="poem-year">${p.year || ''}</span>
+          <span class="poem-arrow">→</span>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    renderPoems();
+  }
+}
+
+loadPoemsFromGitHub();
 renderTracks();
 renderArticles();
 updatePlayer();
