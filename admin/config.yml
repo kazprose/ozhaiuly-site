@@ -37,7 +37,7 @@ collections:
       - {label: "Ән атауы", name: "title", widget: "string"}
       - {label: "Альбом", name: "album", widget: "string", required: false}
       - {label: "Жылы", name: "year", widget: "number", default: 2024}
-      - {label: "Ұзақтығы (мысалы: 3:47)", name: "duration", widget: "string"}
+      - {label: "Ұзақтығы", name: "duration", widget: "string"}
       - {label: "Сипаттама", name: "body", widget: "markdown", required: false}
 
   - name: "research"
