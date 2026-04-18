@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="kk">
 <head>
@@ -8,55 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0d0b07;
-  --bg2:#13110c;
-  --bg3:#1a1710;
-  --surface:#211e16;
-  --gold:#c9a84c;
-  --gold2:#e8c97a;
-  --sand:#d4c5a0;
-  --sand2:#a89878;
-  --text:#f0e8d5;
-  --text2:#b5a882;
-  --text3:#7a6e58;
-  --green:#2d4a35;
-  --green2:#3d6147;
-  --border:rgba(201,168,76,0.2);
-  --serif:'Cormorant Garamond',serif;
-  --sans:'DM Sans',sans-serif;
-}
+:root{--bg:#0d0b07;--bg2:#13110c;--bg3:#1a1710;--surface:#211e16;--gold:#c9a84c;--gold2:#e8c97a;--sand:#d4c5a0;--sand2:#a89878;--text:#f0e8d5;--text2:#b5a882;--text3:#7a6e58;--border:rgba(201,168,76,0.2);--serif:'Cormorant Garamond',serif;--sans:'DM Sans',sans-serif}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
-
-/* NAV */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;transition:all 0.4s;background:transparent}
 nav.scrolled{background:rgba(13,11,7,0.95);backdrop-filter:blur(12px);padding:14px 48px;border-bottom:1px solid var(--border)}
 .nav-logo{font-family:var(--serif);font-size:18px;color:var(--gold);letter-spacing:2px;font-weight:300;text-decoration:none}
 .nav-links{display:flex;gap:32px;list-style:none}
 .nav-links a{color:var(--text2);text-decoration:none;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;font-weight:300}
 .nav-links a:hover{color:var(--gold)}
-.lang-toggle{display:flex;gap:4px;align-items:center}
+.lang-toggle{display:flex;gap:4px}
 .lang-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:4px 10px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:var(--sans);transition:all 0.3s;border-radius:2px}
 .lang-btn.active{border-color:var(--gold);color:var(--gold)}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
-.hamburger span{width:24px;height:1px;background:var(--text);transition:all 0.3s}
-
-/* MOBILE MENU */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:1px;background:var(--text);display:block}
 .mobile-menu{display:none;position:fixed;inset:0;background:rgba(13,11,7,0.98);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px}
 .mobile-menu.open{display:flex}
 .mobile-menu a{font-family:var(--serif);font-size:28px;color:var(--sand);text-decoration:none;letter-spacing:2px}
-
-/* HERO */
 #hero{height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0b07 0%,#1a1508 50%,#0d0b07 100%)}
-.hero-pattern{position:absolute;inset:0;opacity:0.04;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9a84c' fill-opacity='1'%3E%3Cpath d='M30 0L35 10L30 20L25 10zM0 30L10 25L20 30L10 35zM60 30L50 35L40 30L50 25zM30 60L25 50L30 40L35 50z'/%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3C/g%3E%3C/svg%3E")}
-.hero-line{position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--gold),transparent);opacity:0.4;left:48px}
+.hero-pattern{position:absolute;inset:0;opacity:0.04;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9a84c'%3E%3Cpath d='M30 0L35 10L30 20L25 10zM0 30L10 25L20 30L10 35zM60 30L50 35L40 30L50 25zM30 60L25 50L30 40L35 50z'/%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3C/g%3E%3C/svg%3E")}
+.hero-line{position:absolute;left:48px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--gold),transparent);opacity:0.4}
 .hero-content{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;height:100%;width:100%;max-width:1400px;margin:0 auto;padding:0 48px;align-items:center;gap:60px}
 .hero-text{padding-top:80px}
 .hero-pre{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:24px;opacity:0;animation:fadeUp 1s 0.3s forwards}
@@ -78,20 +50,14 @@ nav.scrolled{background:rgba(13,11,7,0.95);backdrop-filter:blur(12px);padding:14
 .scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s 2s forwards}
 .scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2s infinite}
 .scroll-text{font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase}
-
-/* ORNAMENT DIVIDER */
 .ornament{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 0;margin:0 auto;max-width:300px}
 .ornament-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
 .ornament-diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
-
-/* SECTIONS */
 section{padding:100px 48px}
 .section-container{max-width:1200px;margin:0 auto}
 .section-label{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
 .section-title{font-family:var(--serif);font-size:clamp(36px,4vw,52px);font-weight:300;color:var(--text);line-height:1.2;margin-bottom:48px}
 .section-title em{color:var(--gold);font-style:italic}
-
-/* ABOUT */
 #about{background:var(--bg2)}
 .about-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:80px;align-items:start}
 .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-bottom:40px}
@@ -101,8 +67,6 @@ section{padding:100px 48px}
 .about-bio p{font-family:var(--serif);font-size:17px;color:var(--sand);line-height:1.85;margin-bottom:20px;font-weight:300}
 .about-mission{background:var(--surface);border-left:2px solid var(--gold);padding:24px 28px;margin-top:32px}
 .about-mission p{font-family:var(--serif);font-size:15px;color:var(--text2);line-height:1.8;font-style:italic}
-
-/* TIMELINE */
 .timeline{position:relative;padding-left:32px;margin-top:40px}
 .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold),transparent)}
 .timeline-item{position:relative;margin-bottom:32px;opacity:0;transform:translateX(-10px);transition:all 0.5s}
@@ -110,8 +74,6 @@ section{padding:100px 48px}
 .timeline-dot{position:absolute;left:-36px;top:4px;width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
 .timeline-year{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
 .timeline-text{font-size:14px;color:var(--text2);line-height:1.6}
-
-/* POETRY */
 #poetry{background:var(--bg)}
 .poems-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:48px}
 .filter-btn{padding:6px 16px;background:transparent;border:1px solid var(--border);color:var(--text3);font-size:12px;letter-spacing:1px;cursor:pointer;font-family:var(--sans);transition:all 0.3s;border-radius:1px}
@@ -127,8 +89,6 @@ section{padding:100px 48px}
 .poem-meta{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
 .poem-year{font-size:11px;color:var(--text3)}
 .poem-arrow{color:var(--gold);font-size:16px}
-
-/* POEM READER MODAL */
 .reader-modal{position:fixed;inset:0;background:rgba(10,8,5,0.97);z-index:200;overflow-y:auto;display:none;align-items:flex-start;justify-content:center;padding:60px 24px}
 .reader-modal.open{display:flex}
 .reader-close{position:fixed;top:24px;right:32px;background:none;border:1px solid var(--border);color:var(--text2);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all 0.3s;z-index:201}
@@ -138,32 +98,26 @@ section{padding:100px 48px}
 .reader-title{font-family:var(--serif);font-size:clamp(32px,4vw,48px);color:var(--text);font-weight:300;margin-bottom:8px}
 .reader-year{font-size:12px;color:var(--text3);margin-bottom:48px}
 .reader-poem{font-family:var(--serif);font-size:18px;color:var(--sand);line-height:2;white-space:pre-line;font-weight:300}
-.reader-poem .stanza{margin-bottom:32px}
-
-/* MUSIC */
 #music{background:var(--bg2)}
 .music-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
 .playlist{border:1px solid var(--border)}
 .playlist-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .playlist-title{font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase}
 .playlist-count{font-size:11px;color:var(--text3)}
-.track{padding:16px 24px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:background 0.2s;border-bottom:1px solid rgba(201,168,76,0.08)}
-.track:hover,.track.active{background:rgba(201,168,76,0.06)}
+.track-item{padding:16px 24px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:background 0.2s;border-bottom:1px solid rgba(201,168,76,0.08)}
+.track-item:hover,.track-item.active{background:rgba(201,168,76,0.06)}
 .track-num{width:20px;font-size:12px;color:var(--text3);text-align:center}
-.track.active .track-num{color:var(--gold)}
+.track-item.active .track-num{color:var(--gold)}
 .track-info{flex:1}
 .track-name{font-size:14px;color:var(--text);margin-bottom:2px}
-.track.active .track-name{color:var(--gold)}
+.track-item.active .track-name{color:var(--gold)}
 .track-desc{font-size:11px;color:var(--text3)}
 .track-dur{font-size:12px;color:var(--text3);font-family:var(--serif)}
 .player-panel{position:sticky;top:100px}
-.player-art{width:100%;aspect-ratio:1;background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:28px}
-.player-art-pattern{position:absolute;inset:0;opacity:0.15}
-.player-art-icon{font-family:var(--serif);font-size:80px;color:var(--gold);opacity:0.4;z-index:1}
-.player-title{font-family:var(--serif);font-size:24px;color:var(--text);margin-bottom:4px;font-weight:300}
-.player-subtitle{font-size:12px;color:var(--text3);margin-bottom:24px}
-.player-progress{width:100%;height:2px;background:rgba(255,255,255,0.1);margin-bottom:8px;cursor:pointer;position:relative}
-.player-progress-fill{height:100%;background:var(--gold);width:35%;transition:width 0.5s}
+.player-art{width:100%;aspect-ratio:1;background:var(--surface);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.player-art-icon{font-family:var(--serif);font-size:72px;color:var(--gold);opacity:0.5}
+.player-progress{width:100%;height:2px;background:rgba(255,255,255,0.1);margin-bottom:8px;cursor:pointer}
+.player-progress-fill{height:100%;background:var(--gold);width:0%;transition:width 0.5s}
 .player-times{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:24px}
 .player-controls{display:flex;align-items:center;justify-content:center;gap:24px}
 .ctrl-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;transition:color 0.3s;padding:8px}
@@ -176,11 +130,9 @@ section{padding:100px 48px}
 .bar:nth-child(2){height:16px;animation-delay:0.1s}
 .bar:nth-child(3){height:12px;animation-delay:0.2s}
 .bar:nth-child(4){height:6px;animation-delay:0.15s}
-
-/* RESEARCH */
 #research{background:var(--bg3)}
 .research-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
-.article-card{background:var(--surface);padding:32px;transition:transform 0.3s;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.3s}
+.article-card{background:var(--surface);padding:32px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.3s}
 .article-card:hover{transform:translateY(-4px);border-bottom-color:var(--gold)}
 .article-tag{display:inline-block;font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:16px;padding:3px 10px;border:1px solid rgba(201,168,76,0.3)}
 .article-title{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:12px;line-height:1.4;font-weight:400}
@@ -188,10 +140,8 @@ section{padding:100px 48px}
 .article-meta{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--border)}
 .article-date{font-size:11px;color:var(--text3)}
 .article-read{font-size:11px;color:var(--gold);letter-spacing:1px}
-
-/* GALLERY */
 #gallery{background:var(--bg)}
-.gallery-tabs{display:flex;gap:0;margin-bottom:40px;border-bottom:1px solid var(--border)}
+.gallery-tabs{display:flex;margin-bottom:40px;border-bottom:1px solid var(--border)}
 .gallery-tab{padding:12px 24px;background:none;border:none;color:var(--text3);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:var(--sans);transition:all 0.3s;border-bottom:2px solid transparent;margin-bottom:-1px}
 .gallery-tab.active,.gallery-tab:hover{color:var(--gold);border-bottom-color:var(--gold)}
 .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
@@ -199,16 +149,8 @@ section{padding:100px 48px}
 .photo-item:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
 .photo-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;filter:sepia(10%)}
 .photo-item:hover img{transform:scale(1.05)}
-.photo-item-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:28px;color:var(--gold);opacity:0.3;min-height:160px}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;display:none}
-.video-card{background:var(--surface);overflow:hidden}
-.video-thumb{width:100%;aspect-ratio:16/9;background:var(--bg3);display:flex;align-items:center;justify-content:center;position:relative}
-.video-play{width:56px;height:56px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px}
-.video-info{padding:16px}
-.video-title{font-family:var(--serif);font-size:16px;color:var(--text);margin-bottom:4px}
-.video-date{font-size:11px;color:var(--text3)}
-
-/* CONTACT */
+.photo-item-placeholder{width:100%;height:100%;min-height:160px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:28px;color:var(--gold);opacity:0.3}
+.video-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 #contact{background:var(--bg2);text-align:center}
 .contact-inner{max-width:600px;margin:0 auto}
 .contact-email{font-family:var(--serif);font-size:clamp(20px,3vw,32px);color:var(--gold);font-weight:300;margin-bottom:12px;font-style:italic}
@@ -221,33 +163,24 @@ section{padding:100px 48px}
 .social-links{display:flex;justify-content:center;gap:24px;margin-top:48px}
 .social-link{width:40px;height:40px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text3);text-decoration:none;font-size:14px;transition:all 0.3s}
 .social-link:hover{border-color:var(--gold);color:var(--gold)}
-
-/* FOOTER */
 footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .footer-logo{font-family:var(--serif);font-size:20px;color:var(--gold);font-weight:300}
 .footer-copy{font-size:11px;color:var(--text3);letter-spacing:1px}
-
-/* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes scrollPulse{0%,100%{opacity:0.6}50%{opacity:1}}
 @keyframes equalizer{0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1)}}
 .reveal{opacity:0;transform:translateY(24px);transition:all 0.7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* RESPONSIVE */
 @media(max-width:900px){
-  nav{padding:16px 24px}
-  nav.scrolled{padding:12px 24px}
-  .nav-links{display:none}
-  .hamburger{display:flex}
+  nav{padding:16px 24px}nav.scrolled{padding:12px 24px}
+  .nav-links{display:none}.hamburger{display:flex}
   section{padding:80px 24px}
   .hero-content{grid-template-columns:1fr;padding:0 24px;gap:0}
-  .hero-image-wrap{display:none}
+  .hero-image-wrap{display:block}.hero-img-frame{height:50vh}
   .hero-line{left:24px}
   .about-grid{grid-template-columns:1fr;gap:40px}
-  .music-layout{grid-template-columns:1fr;gap:32px}
-  .player-panel{position:static}
+  .music-layout{grid-template-columns:1fr;gap:32px}.player-panel{position:static}
   .photo-grid{grid-template-columns:repeat(2,1fr)}
   .photo-item:first-child{grid-column:span 1;grid-row:span 1}
   .form-row{grid-template-columns:1fr}
@@ -257,7 +190,6 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
 </head>
 <body>
 
-<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#about" onclick="closeMobile()">Автор туралы</a>
   <a href="#poetry" onclick="closeMobile()">Өлеңдер</a>
@@ -267,7 +199,6 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
   <a href="#contact" onclick="closeMobile()">Байланыс</a>
 </div>
 
-<!-- NAV -->
 <nav id="mainNav">
   <a href="#hero" class="nav-logo">Ықылас Ожайұлы</a>
   <ul class="nav-links">
@@ -280,29 +211,22 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
   </ul>
   <div style="display:flex;align-items:center;gap:16px">
     <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('kk')">ҚАЗ</button>
-      <button class="lang-btn" onclick="setLang('ru')">РУС</button>
+      <button class="lang-btn active" onclick="setLang('kk',this)">ҚАЗ</button>
+      <button class="lang-btn" onclick="setLang('ru',this)">РУС</button>
     </div>
-    <div class="hamburger" onclick="toggleMobile()">
-      <span></span><span></span><span></span>
-    </div>
+    <button class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
-<!-- HERO -->
 <section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-pattern"></div>
-  <div class="hero-line"></div>
+  <div class="hero-bg"></div><div class="hero-pattern"></div><div class="hero-line"></div>
   <div class="hero-content">
     <div class="hero-text">
       <p class="hero-pre">Авторлық сайт</p>
       <h1 class="hero-name">Ықылас<br><span>Ожайұлы</span></h1>
       <div class="hero-roles">
-        <span class="hero-role">Ақын</span>
-        <span class="hero-role">Композитор</span>
-        <span class="hero-role">Әнші</span>
-        <span class="hero-role">Өнер зерттеушісі</span>
+        <span class="hero-role">Ақын</span><span class="hero-role">Композитор</span>
+        <span class="hero-role">Әнші</span><span class="hero-role">Өнер зерттеушісі</span>
         <span class="hero-role">Алаштанушы</span>
       </div>
       <p class="hero-tagline">«Сөз — халықтың жаны,<br>ән — жүректің тілі,<br>тарих — ертеңгі күннің айнасы.»</p>
@@ -317,13 +241,9 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       </div>
     </div>
   </div>
-  <div class="scroll-indicator">
-    <span class="scroll-text">Төмен</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="scroll-indicator"><span class="scroll-text">Төмен</span><div class="scroll-line"></div></div>
 </section>
 
-<!-- ABOUT -->
 <section id="about">
   <div class="section-container">
     <div class="about-grid">
@@ -337,70 +257,45 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
           <div class="stat-box"><div class="stat-num">20</div><div class="stat-label">Жыл</div></div>
         </div>
         <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-year">2004</div>
-            <div class="timeline-text">Алғашқы өлеңдер жинағы жарыққа шықты</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-year">2008</div>
-            <div class="timeline-text">«Дала сазы» атты бірінші ән альбомы</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-year">2013</div>
-            <div class="timeline-text">Алаш зерттеу мектебін негіздеді</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-year">2018</div>
-            <div class="timeline-text">Мемлекеттік мәдениет сыйлығының лауреаты</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-year">2023</div>
-            <div class="timeline-text">«Мәңгілік жол» — жаңа кітап және альбом</div>
-          </div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-year">2004</div><div class="timeline-text">Алғашқы өлеңдер жинағы жарыққа шықты</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-year">2008</div><div class="timeline-text">«Дала сазы» атты бірінші ән альбомы</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-year">2013</div><div class="timeline-text">Алаш зерттеу мектебін негіздеді</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-year">2018</div><div class="timeline-text">Мемлекеттік мәдениет сыйлығының лауреаты</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-year">2023</div><div class="timeline-text">«Мәңгілік жол» — жаңа кітап және альбом</div></div>
         </div>
       </div>
       <div class="reveal" style="transition-delay:0.2s">
         <div class="about-bio">
           <p>Ықылас Ожайұлы — қазақ руханиятының жарқын өкілі, ақын, композитор, әнші және өнер зерттеушісі. Оның шығармашылығы дала лирикасы мен тарихи философияны бірегей үндестіреді.</p>
-          <p>Алаштанушы ғалым ретінде ол ұлт тарихының беймәлім беттерін зерттеп, кейінгі ұрпаққа мол мұра қалдырды. Туындылары елдің рухани кеңістігін байытып, ұлттық санаға терең із қалдырады.</p>
+          <p>Алаштанушы ғалым ретінде ол ұлт тарихының беймәлім беттерін зерттеп, кейінгі ұрпаққа мол мұра қалдырды.</p>
           <p>Оның әндері мен өлеңдерінде Қазақстанның кең даласы, бабалар аманаты және болашаққа деген сенім ерекше сезіммен жырланады.</p>
         </div>
-        <div class="about-mission">
-          <p>«Менің шығармашылығым — халқымның тарихы мен болашағы арасындағы көпір. Сөз бен саз арқылы ұлттық тұлғамызды сақтап, жаңа буынға жеткіземіз.»</p>
-        </div>
+        <div class="about-mission"><p>«Менің шығармашылығым — халқымның тарихы мен болашағы арасындағы көпір. Сөз бен саз арқылы ұлттық тұлғамызды сақтап, жаңа буынға жеткіземіз.»</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- POETRY -->
 <section id="poetry">
   <div class="section-container">
     <p class="section-label reveal">Өлеңдер</p>
     <h2 class="section-title reveal">Лирикалық<br><em>мұра</em></h2>
     <div class="poems-filter reveal">
       <button class="filter-btn active" onclick="filterPoems('all',this)">Барлығы</button>
-      <button class="filter-btn" onclick="filterPoems('лирика',this)">Лирика</button>
-      <button class="filter-btn" onclick="filterPoems('философия',this)">Философия</button>
-      <button class="filter-btn" onclick="filterPoems('тарихи',this)">Тарихи</button>
-      <button class="filter-btn" onclick="filterPoems('табиғат',this)">Табиғат</button>
+      <button class="filter-btn" onclick="filterPoems('lirika',this)">Лирика</button>
+      <button class="filter-btn" onclick="filterPoems('filosofia',this)">Философия</button>
+      <button class="filter-btn" onclick="filterPoems('tarihi',this)">Тарихи</button>
+      <button class="filter-btn" onclick="filterPoems('tabigat',this)">Табиғат</button>
     </div>
-    <div class="poems-grid" id="poemsGrid"></div>
+    <div class="poems-grid" id="poemsGrid"><div style="padding:32px;color:var(--text3);font-size:14px">Жүктелуде...</div></div>
   </div>
 </section>
 
-<!-- POEM READER MODAL -->
 <div class="reader-modal" id="readerModal">
   <button class="reader-close" onclick="closeReader()">✕</button>
   <div class="reader-content" id="readerContent"></div>
 </div>
 
-<!-- MUSIC -->
 <section id="music">
   <div class="section-container">
     <p class="section-label reveal">Әндер</p>
@@ -410,33 +305,28 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
         <div class="playlist">
           <div class="playlist-header">
             <span class="playlist-title">Негізгі жинақ</span>
-            <span class="playlist-count">8 ән</span>
+            <span class="playlist-count" id="trackCount">...</span>
           </div>
-          <div id="trackList"></div>
+          <div id="trackList"><div style="padding:24px;color:var(--text3);font-size:13px">Жүктелуде...</div></div>
         </div>
       </div>
       <div class="reveal player-panel" style="transition-delay:0.2s">
-        <div class="player-art">
-          <div class="player-art-pattern" style="background-image:url('data:image/svg+xml,%3Csvg width=40 height=40 viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M20 0L24 10L20 20L16 10z\' fill=\'%23c9a84c\'/%3E%3C/svg%3E');background-size:40px"></div>
-          <div class="player-art-icon" style="font-family:var(--serif);font-size:72px;color:var(--gold);opacity:0.5;position:relative;z-index:1">♪</div>
-        </div>
-        <div id="playerTitle" style="font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:4px;font-weight:300">Дала желі</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:24px">Ықылас Ожайұлы · 2023</div>
+        <div class="player-art"><div class="player-art-icon">♪</div></div>
+        <div id="playerTitle" style="font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:4px;font-weight:300">—</div>
+        <div id="playerMeta" style="font-size:12px;color:var(--text3);margin-bottom:24px">Ықылас Ожайұлы</div>
         <div class="player-progress" onclick="seekTrack(event)">
           <div class="player-progress-fill" id="progressFill"></div>
         </div>
-        <div class="player-times">
-          <span id="timeElapsed">1:23</span>
-          <span id="timeDuration">3:47</span>
-        </div>
+        <div class="player-times"><span id="timeElapsed">0:00</span><span id="timeDuration">0:00</span></div>
         <div class="player-controls">
-          <button class="ctrl-btn" onclick="prevTrack()" title="Алдыңғы">⏮</button>
+          <button class="ctrl-btn" onclick="prevTrack()">⏮</button>
           <button class="ctrl-play" id="playBtn" onclick="togglePlay()">▶</button>
-          <button class="ctrl-btn" onclick="nextTrack()" title="Келесі">⏭</button>
+          <button class="ctrl-btn" onclick="nextTrack()">⏭</button>
         </div>
+        <audio id="htmlAudio" style="display:none"></audio>
         <div style="display:flex;align-items:center;gap:12px;margin-top:24px">
-          <span style="font-size:11px;color:var(--text3)">Дыбыс</span>
-          <input type="range" min="0" max="100" value="80" style="flex:1;height:2px" oninput="setVolume(this.value)">
+          <span style="font-size:11px;color:var(--text3)">🔈</span>
+          <input type="range" min="0" max="100" value="80" style="flex:1;height:2px;accent-color:var(--gold)" oninput="setVolume(this.value)">
           <span style="font-size:11px;color:var(--text3)" id="volNum">80</span>
         </div>
       </div>
@@ -444,7 +334,6 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
   </div>
 </section>
 
-<!-- RESEARCH -->
 <section id="research">
   <div class="section-container">
     <p class="section-label reveal">Зерттеулер</p>
@@ -453,7 +342,6 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
   </div>
 </section>
 
-<!-- GALLERY -->
 <section id="gallery">
   <div class="section-container">
     <p class="section-label reveal">Галерея</p>
@@ -463,9 +351,7 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       <button class="gallery-tab" onclick="showTab('video',this)">Бейне</button>
     </div>
     <div class="photo-grid reveal" id="photoGrid">
-      <div class="photo-item" style="min-height:320px">
-        <img src="images/portrait.jpg" alt="Ықылас Ожайұлы" style="width:100%;height:100%;object-fit:cover">
-      </div>
+      <div class="photo-item" style="min-height:320px"><img src="images/NEW_SAR_3880.JPG" alt="Ықылас Ожайұлы" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
       <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
       <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
@@ -473,22 +359,17 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
       <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
     </div>
-    <div class="video-grid" id="videoGrid">
-      <div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div><div class="video-info"><div class="video-title">«Дала желі» — концерт</div><div class="video-date">2023 · Алматы</div></div></div>
-      <div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div><div class="video-info"><div class="video-title">Алаш тарихы жайлы</div><div class="video-date">2022 · Астана</div></div></div>
-      <div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div><div class="video-info"><div class="video-title">Поэзия кеші</div><div class="video-date">2021 · Нур-Сұлтан</div></div></div>
-    </div>
+    <div class="video-grid" id="videoGrid"></div>
   </div>
 </section>
 
-<!-- CONTACT -->
 <section id="contact">
   <div class="section-container">
     <div class="contact-inner">
       <p class="section-label reveal" style="text-align:center">Байланыс</p>
       <h2 class="section-title reveal" style="text-align:center">Хабарласыңыз</h2>
       <div class="ornament reveal"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
-      <div class="contact-email reveal">ykylas@ozhayuly.kz</div>
+      <div class="contact-email reveal">ykylas@ozhaiuly.kz</div>
       <div class="contact-form reveal">
         <div class="form-row">
           <div class="form-group"><label>Атыңыз</label><input type="text" placeholder="Аты-жөніңіз"></div>
@@ -499,326 +380,270 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
         <button class="btn-primary" style="width:100%;padding:14px">Жіберу</button>
       </div>
       <div class="social-links reveal">
-        <a href="#" class="social-link" title="Facebook">f</a>
-        <a href="#" class="social-link" title="Instagram">in</a>
-        <a href="#" class="social-link" title="YouTube">▶</a>
-        <a href="#" class="social-link" title="Telegram">✈</a>
+        <a href="#" class="social-link">f</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">▶</a>
+        <a href="#" class="social-link">✈</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Ықылас Ожайұлы</div>
   <div class="footer-copy">© 2024 · Барлық құқықтар қорғалған</div>
 </footer>
 
 <script>
-const poems=[
-  {id:1,cat:'лирика',title:'Дала жыры',year:'2020',excerpt:'Сарыарқаның самалы,\nжүрегімді жылытар...',
-   content:`Сарыарқаның самалы,
-жүрегімді жылытар,
-Бабалардың аманаты,
-рухымызды тірілтер.
+const REPO = 'kazprose/ozhaiuly-site';
 
-Ұлы далам, ұлы жерім,
-сенің кеңдігің — менің еркім,
-Аспаныңда жұлдыздарым,
-жолым — тарихтың жолы.
+/* ===== POEMS ===== */
+let allPoems = [];
 
-Сарыарқаның самалы,
-жүрегімді жылытар,
-Ұрпақтарға қалдырайын,
-сүйіспеншілік мұрасын.`},
-  {id:2,cat:'философия',title:'Уақыт дарасы',year:'2019',excerpt:'Өткен күндер — өзен суы,\nаққан жерге оралмас...',
-   content:`Өткен күндер — өзен суы,
-аққан жерге оралмас,
-Ертең туар жаңа таңда,
-өткенің ізіңді қалдыр.
-
-Философ болма бекер,
-тіршіліктің мәнін тап,
-Жүрегіңде мәңгілік жатыр,
-іздеме алысқа бар.
-
-Уақыт — дарияның жолы,
-жарығы бар тереңінде,
-Өз жаныңды тани біл,
-сонда табарсың өзіңді.`},
-  {id:3,cat:'тарихи',title:'Алаш аруағы',year:'2021',excerpt:'Алаш! — деп ұран салған ер,\nтарихтан өшпес аттары...',
-   content:`Алаш! — деп ұран салған ер,
-тарихтан өшпес аттары,
-Ел үшін от боп жанған жан,
-халық жүрегінде жатыр.
-
-Байтұрсынов, Дулатов,
-Бөкейханов — арыстарым,
-Сіздердің жолын жалғаймын,
-ұрпақтарға жеткіземін.
-
-Алаш аруағы — нұр болсын,
-тарихымыз — мақтанышым,
-Ел болудың жолын тапқан,
-данышпандар ізін басам.`},
-  {id:4,cat:'табиғат',title:'Күз сазы',year:'2022',excerpt:'Сарғайған жапырақтар жерге,\nтүседі ақырын ғана...',
-   content:`Сарғайған жапырақтар жерге,
-түседі ақырын ғана,
-Табиғаттың тынысындай,
-жыл мезгілі өтеді.
-
-Күз — ойлы мезгіл,
-терең ойға шомасың,
-Уақыттың өтуін сезесің,
-мәңгілікті аңсайсың.
-
-Сарғайған жапырақтар сияқты,
-ғұмыр да өтеді,
-Артында мол мұра қалдыр,
-мөлдір от болып жан.`},
-  {id:5,cat:'лирика',title:'Анаға хат',year:'2018',excerpt:'Анашым-ай, ардақтым-ай,\nалысқа кетіп едім...',
-   content:`Анашым-ай, ардақтым-ай,
-алысқа кетіп едім,
-Сағынышым асып-тасқан,
-хат жазайын деп едім.
-
-Сенің қолың жылы еді,
-маңдайыма тиген кез,
-Ол жылулық — менің үшін,
-өшпес шырақ, мәңгі жылу.
-
-Анашым-ай, аман бол,
-ұзақ өмір сұраймын,
-Сені сүйем мәңгі мен,
-жүрегімде өмір бойы.`},
-  {id:6,cat:'философия',title:'Жарық жол',year:'2023',excerpt:'Қараңғыда жарық таба,\nүміт сөнбесін ешқашан...',
-   content:`Қараңғыда жарық таба,
-үміт сөнбесін ешқашан,
-Ел алдына жарық болып,
-адастырма жолдан адам.
-
-Жарық — білімнің нышаны,
-шамшырақ бол халқыңа,
-Өз жолыңды жарата біл,
-сонда болар бақытың.
-
-Жарық жол — мәңгілік жол,
-ізгіліктің жолы бұл,
-Адам болып туды ерен,
-адам болып кет дүниеден.`}
-];
-
-const tracks=[
-  {title:'Дала желі',desc:'2023 · Лирика',dur:'3:47'},
-  {title:'Мәңгілік жол',desc:'2023 · Философия',dur:'4:12'},
-  {title:'Алаш аруағы',desc:'2021 · Тарихи',dur:'5:08'},
-  {title:'Анаға хат',desc:'2018 · Лирика',dur:'3:55'},
-  {title:'Күз сазы',desc:'2022 · Табиғат',dur:'4:30'},
-  {title:'Жарық жол',desc:'2023 · Философия',dur:'3:22'},
-  {title:'Сарыарқа',desc:'2020 · Тарихи',dur:'5:45'},
-  {title:'Жас ұрпақ',desc:'2019 · Лирика',dur:'4:01'}
-];
-
-const articles=[
-  {tag:'Алаш',title:'Алаш қозғалысының рухани мұрасы',excerpt:'Алаш зиялыларының ұлттық санаға қосқан үлесін зерттеу және бүгінгі күнмен байланысы.',date:'2024 · Маусым',read:'15 мин'},
-  {tag:'Өнер',title:'Қазақ халық музыкасының жаңару жолдары',excerpt:'Дәстүрлі қазақ музыкасын заманауи форматта сақтау және дамытудың мүмкіндіктері.',date:'2023 · Желтоқсан',read:'12 мин'},
-  {tag:'Тарих',title:'Дала мәдениетінің тарихи-философиялық негіздері',excerpt:'Көшпелі өркениеттің болмыстық ойлар жүйесі және оның бүгінгі ұрпаққа берер тағылымы.',date:'2023 · Қыркүйек',read:'20 мин'},
-  {tag:'Мәдениет',title:'Тіл — ұлттың жаны: қазақ тілін сақтау мәселесі',excerpt:'Қазіргі жаһандану кезеңінде ана тілін сақтаудың маңызы мен тиімді жолдары.',date:'2023 · Наурыз',read:'10 мин'},
-  {tag:'Өнер',title:'Ауыз әдебиетінің заманауи мәні',excerpt:'Жыраулар дәстүрі мен ауыз әдебиетінің бүгінгі мәдени кеңістіктегі орны мен маңызы.',date:'2022 · Желтоқсан',read:'8 мин'},
-  {tag:'Алаш',title:'Ахмет Байтұрсынов: тіл реформаторы',excerpt:'Ұлы ғалым Ахмет Байтұрсыновтың қазақ алфавиті мен емлесіне қосқан тарихи үлесі.',date:'2022 · Қыркүйек',read:'18 мин'}
-];
-
-let currentTrack=0, isPlaying=false, progress=35, progressInterval;
-const translations={kk:{about:'Автор туралы',poetry:'Өлеңдер',music:'Әндер',research:'Зерттеулер',gallery:'Галерея',contact:'Байланыс'},ru:{about:'Об авторе',poetry:'Стихи',music:'Песни',research:'Исследования',gallery:'Галерея',contact:'Контакты'}};
-
-function renderPoems(filter='all'){
-  const g=document.getElementById('poemsGrid');
-  const list=filter==='all'?poems:poems.filter(p=>p.cat===filter);
-  g.innerHTML=list.map(p=>`<div class="poem-card" onclick="openPoem(${p.id})">
-    <div class="poem-cat">${p.cat}</div>
-    <div class="poem-title">${p.title}</div>
-    <div class="poem-excerpt">${p.excerpt}</div>
-    <div class="poem-meta"><span class="poem-year">${p.year}</span><span class="poem-arrow">→</span></div>
-  </div>`).join('');
-}
-
-function filterPoems(cat,btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderPoems(cat);
-}
-
-function openPoem(id){
-  const p=poems.find(x=>x.id===id);
-  if(!p)return;
-  document.getElementById('readerContent').innerHTML=`
-    <div class="reader-cat">${p.cat}</div>
-    <h1 class="reader-title">${p.title}</h1>
-    <div class="reader-year">${p.year} · Ықылас Ожайұлы</div>
-    <div class="reader-poem"><div class="stanza">${p.content}</div></div>`;
-  document.getElementById('readerModal').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-
-function closeReader(){
-  document.getElementById('readerModal').classList.remove('open');
-  document.body.style.overflow='';
-}
-
-function renderTracks(){
-  const tl=document.getElementById('trackList');
-  tl.innerHTML=tracks.map((t,i)=>`<div class="track${i===currentTrack?' active':''}" onclick="selectTrack(${i})">
-    ${i===currentTrack&&isPlaying?`<div class="now-playing-indicator"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`:`<span class="track-num">${i+1}</span>`}
-    <div class="track-info"><div class="track-name">${t.title}</div><div class="track-desc">${t.desc}</div></div>
-    <div class="track-dur">${t.dur}</div>
-  </div>`).join('');
-}
-
-function selectTrack(i){
-  currentTrack=i;
-  isPlaying=true;
-  progress=0;
-  updatePlayer();
-  renderTracks();
-  startProgress();
-}
-
-function togglePlay(){
-  isPlaying=!isPlaying;
-  document.getElementById('playBtn').textContent=isPlaying?'⏸':'▶';
-  if(isPlaying)startProgress();else clearInterval(progressInterval);
-  renderTracks();
-}
-
-function prevTrack(){currentTrack=(currentTrack-1+tracks.length)%tracks.length;isPlaying=true;progress=0;updatePlayer();renderTracks();startProgress()}
-function nextTrack(){currentTrack=(currentTrack+1)%tracks.length;isPlaying=true;progress=0;updatePlayer();renderTracks();startProgress()}
-
-function updatePlayer(){
-  const t=tracks[currentTrack];
-  document.getElementById('playerTitle').textContent=t.title;
-  document.getElementById('timeDuration').textContent=t.dur;
-  document.getElementById('playBtn').textContent=isPlaying?'⏸':'▶';
-}
-
-function startProgress(){
-  clearInterval(progressInterval);
-  progressInterval=setInterval(()=>{
-    if(!isPlaying)return;
-    progress=Math.min(100,progress+0.2);
-    document.getElementById('progressFill').style.width=progress+'%';
-    const total=parseDur(tracks[currentTrack].dur);
-    const elapsed=Math.floor(total*progress/100);
-    document.getElementById('timeElapsed').textContent=formatTime(elapsed);
-    if(progress>=100)nextTrack();
-  },200);
-}
-
-function parseDur(s){const[m,sec]=s.split(':');return parseInt(m)*60+parseInt(sec)}
-function formatTime(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60}
-function seekTrack(e){const rect=e.currentTarget.getBoundingClientRect();progress=(e.clientX-rect.left)/rect.width*100;document.getElementById('progressFill').style.width=progress+'%'}
-function setVolume(v){document.getElementById('volNum').textContent=v}
-
-function renderArticles(){
-  document.getElementById('articlesGrid').innerHTML=articles.map(a=>`<div class="article-card reveal">
-    <span class="article-tag">${a.tag}</span>
-    <div class="article-title">${a.title}</div>
-    <div class="article-excerpt">${a.excerpt}</div>
-    <div class="article-meta"><span class="article-date">${a.date}</span><span class="article-read">${a.read} оқу →</span></div>
-  </div>`).join('');
-}
-
-function showTab(tab,btn){
-  document.querySelectorAll('.gallery-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('photoGrid').style.display=tab==='photos'?'grid':'none';
-  document.getElementById('videoGrid').style.display=tab==='video'?'grid':'none';
-}
-
-function setLang(lang){
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-}
-
-function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open')}
-function closeMobile(){document.getElementById('mobileMenu').classList.remove('open')}
-
-window.addEventListener('scroll',()=>{
-  const nav=document.getElementById('mainNav');
-  if(window.scrollY>60)nav.classList.add('scrolled');else nav.classList.remove('scrolled');
-  document.querySelectorAll('.reveal,.timeline-item').forEach(el=>{
-    const rect=el.getBoundingClientRect();
-    if(rect.top<window.innerHeight-80)el.classList.add('visible');
-  });
-});
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReader()});
-
-// GitHub API арқылы нақты өлеңдерді жүктеу
-async function loadPoemsFromGitHub() {
+async function loadPoems() {
   try {
-    const res = await fetch(
-      'https://api.github.com/repos/kazprose/ozhaiuly-site/contents/content/poems'
-    );
-    if (!res.ok) { renderPoems(); return; }
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/poems');
+    if (!res.ok) throw new Error();
     const files = await res.json();
-    if (!files.length) { renderPoems(); return; }
-
-    const poems = await Promise.all(files.map(async file => {
-      const r = await fetch(file.download_url);
-      const text = await r.text();
+    if (!Array.isArray(files) || !files.length) throw new Error();
+    allPoems = await Promise.all(files.map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
       const meta = {};
-      const parts = text.split('---').filter(Boolean);
+      const parts = txt.split('---').filter(Boolean);
       parts[0].trim().split('\n').forEach(line => {
-        const [k, ...v] = line.split(':');
-        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
+        const [k,...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
       });
-      meta.content = (parts[1] || '').trim();
+      meta.content = (parts[1]||'').trim();
       return meta;
     }));
-
-    const grid = document.getElementById('poemsGrid');
-    if (!grid) return;
-    grid.innerHTML = poems.map(p => `
-<div class="poem-card" data-category="${p.category || ''}" onclick="openPoemPage(this)" data-content="${encodeURIComponent(p.content)}" data-title="${encodeURIComponent(p.title||'')}" data-year="${p.year||''}" data-cat="${p.category||''}">        <div class="poem-cat">${p.category || 'лирика'}</div>
-        <div class="poem-title">${p.title || ''}</div>
-        <div class="poem-excerpt">${p.content.split('\n').slice(0,2).join('<br>')}</div>
-        <div class="poem-meta">
-          <span class="poem-year">${p.year || ''}</span>
-          <span class="poem-arrow">→</span>
-        </div>
-      </div>
-    `).join('');
+    renderPoems(allPoems);
   } catch(e) {
-    renderPoems();
+    allPoems = [];
+    document.getElementById('poemsGrid').innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер қосылмаған.</div>';
   }
 }
-function openPoemPage(card) {
-  const title   = decodeURIComponent(card.dataset.title);
-  const content = decodeURIComponent(card.dataset.content);
-  const year    = card.dataset.year;
-  const cat     = card.dataset.cat;
 
+function renderPoems(list) {
+  const g = document.getElementById('poemsGrid');
+  if (!g) return;
+  if (!list.length) { g.innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер жоқ.</div>'; return; }
+  g.innerHTML = list.map(p => `
+    <div class="poem-card"
+      data-category="${p.category||''}"
+      data-content="${encodeURIComponent(p.content||'')}"
+      data-title="${encodeURIComponent(p.title||'')}"
+      data-year="${p.year||''}"
+      data-cat="${p.category||''}"
+      onclick="openPoem(this)">
+      <div class="poem-cat">${p.category||''}</div>
+      <div class="poem-title">${p.title||''}</div>
+      <div class="poem-excerpt">${(p.content||'').split('\n').slice(0,2).join('<br>')}</div>
+      <div class="poem-meta"><span class="poem-year">${p.year||''}</span><span class="poem-arrow">→</span></div>
+    </div>`).join('');
+}
+
+function filterPoems(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPoems(cat === 'all' ? allPoems : allPoems.filter(p => p.category === cat));
+}
+
+function openPoem(card) {
+  const title = decodeURIComponent(card.dataset.title);
+  const content = decodeURIComponent(card.dataset.content);
   document.getElementById('readerContent').innerHTML = `
-    <div class="reader-cat">${cat}</div>
+    <div class="reader-cat">${card.dataset.cat}</div>
     <h1 class="reader-title">${title}</h1>
-    <div class="reader-year">${year} · Ықылас Ожайұлы</div>
-    <div class="reader-poem"><div class="stanza">${content.replace(/\n/g,'<br>')}</div></div>
-  `;
+    <div class="reader-year">${card.dataset.year} · Ықылас Ожайұлы</div>
+    <div class="reader-poem">${content.replace(/\n/g,'<br>')}</div>`;
   document.getElementById('readerModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-loadPoemsFromGitHub();
-renderTracks();
-renderArticles();
-updatePlayer();
-startProgress();
 
-setTimeout(()=>{
-  document.querySelectorAll('.reveal,.timeline-item').forEach(el=>{
-    const rect=el.getBoundingClientRect();
-    if(rect.top<window.innerHeight-80)el.classList.add('visible');
+function closeReader() {
+  document.getElementById('readerModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ===== TRACKS ===== */
+let tracks = [];
+let curTrack = 0;
+let playing = false;
+let demoProg = 0;
+let demoTimer = null;
+
+async function loadTracks() {
+  try {
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/songs');
+    if (!res.ok) throw new Error();
+    const files = await res.json();
+    if (!Array.isArray(files) || !files.length) throw new Error();
+    tracks = await Promise.all(files.map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
+      const meta = {};
+      const parts = txt.split('---').filter(Boolean);
+      parts[0].trim().split('\n').forEach(line => {
+        const [k,...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
+      });
+      return meta;
+    }));
+    const el = document.getElementById('trackCount');
+    if (el) el.textContent = tracks.length + ' ән';
+    renderTracks();
+    setPlayerTitle(0);
+  } catch(e) {
+    tracks = [
+      {title:'Дала желі',duration:'3:47',album:'Дала сазы',year:'2023'},
+      {title:'Мәңгілік жол',duration:'4:12',album:'Дала сазы',year:'2023'},
+      {title:'Анаға хат',duration:'3:55',album:'Дала сазы',year:'2018'},
+    ];
+    const el = document.getElementById('trackCount');
+    if (el) el.textContent = tracks.length + ' ән';
+    renderTracks();
+    setPlayerTitle(0);
+  }
+}
+
+function renderTracks() {
+  const tl = document.getElementById('trackList');
+  if (!tl) return;
+  tl.innerHTML = tracks.map((t,i) => `
+    <div class="track-item${i===curTrack?' active':''}" onclick="selectTrack(${i})">
+      ${i===curTrack&&playing
+        ? '<div class="now-playing-indicator"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>'
+        : '<span class="track-num">'+(i+1)+'</span>'}
+      <div class="track-info">
+        <div class="track-name">${t.title||''}</div>
+        <div class="track-desc">${t.year||2024} · ${t.album||'Жинақ'}</div>
+      </div>
+      <div class="track-dur">${t.duration||'0:00'}</div>
+    </div>`).join('');
+}
+
+function setPlayerTitle(i) {
+  const t = tracks[i];
+  if (!t) return;
+  const pt = document.getElementById('playerTitle');
+  const td = document.getElementById('timeDuration');
+  const pm = document.getElementById('playerMeta');
+  if (pt) pt.textContent = t.title || '';
+  if (td) td.textContent = t.duration || '0:00';
+  if (pm) pm.textContent = 'Ықылас Ожайұлы · ' + (t.year || 2024);
+}
+
+function selectTrack(i) {
+  curTrack = i; playing = true; demoProg = 0;
+  setPlayerTitle(i);
+  renderTracks();
+  document.getElementById('playBtn').textContent = '⏸';
+  const audio = document.getElementById('htmlAudio');
+  const t = tracks[i];
+  if (audio && t && t.audio) {
+    audio.src = t.audio;
+    audio.load();
+    audio.play().catch(() => startDemo());
+  } else { startDemo(); }
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
+  const audio = document.getElementById('htmlAudio');
+  if (audio && audio.src) playing ? audio.play().catch(()=>{}) : audio.pause();
+  renderTracks();
+}
+
+function prevTrack() { selectTrack((curTrack - 1 + tracks.length) % tracks.length); }
+function nextTrack() { selectTrack((curTrack + 1) % tracks.length); }
+
+function parseDur(s) { const [m,sec]=(s||'0:00').split(':'); return parseInt(m)*60+parseInt(sec||0); }
+function fmtTime(s) { return Math.floor(s/60)+':'+(Math.floor(s)%60<10?'0':'')+Math.floor(s)%60; }
+
+function startDemo() {
+  clearInterval(demoTimer);
+  const total = parseDur(tracks[curTrack]?.duration || '3:00');
+  demoTimer = setInterval(() => {
+    if (!playing) return;
+    demoProg += 0.3;
+    if (demoProg >= total) { nextTrack(); return; }
+    const pct = demoProg / total * 100;
+    const pf = document.getElementById('progressFill');
+    const te = document.getElementById('timeElapsed');
+    if (pf) pf.style.width = pct + '%';
+    if (te) te.textContent = fmtTime(demoProg);
+  }, 300);
+}
+
+function seekTrack(e) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  demoProg = pct * parseDur(tracks[curTrack]?.duration || '3:00');
+  const pf = document.getElementById('progressFill');
+  if (pf) pf.style.width = (pct * 100) + '%';
+}
+
+function setVolume(v) {
+  document.getElementById('volNum').textContent = v;
+  const audio = document.getElementById('htmlAudio');
+  if (audio) audio.volume = v / 100;
+}
+
+/* ===== RESEARCH ===== */
+const articles = [
+  {tag:'Алаш',title:'Алаш қозғалысының рухани мұрасы',excerpt:'Алаш зиялыларының ұлттық санаға қосқан үлесін зерттеу.',date:'2024 · Маусым',read:'15 мин'},
+  {tag:'Өнер',title:'Қазақ халық музыкасының жаңару жолдары',excerpt:'Дәстүрлі қазақ музыкасын заманауи форматта сақтау.',date:'2023 · Желтоқсан',read:'12 мин'},
+  {tag:'Тарих',title:'Дала мәдениетінің тарихи-философиялық негіздері',excerpt:'Көшпелі өркениеттің болмыстық ойлар жүйесі.',date:'2023 · Қыркүйек',read:'20 мин'},
+  {tag:'Мәдениет',title:'Тіл — ұлттың жаны',excerpt:'Қазіргі жаһандану кезеңінде ана тілін сақтаудың маңызы.',date:'2023 · Наурыз',read:'10 мин'},
+  {tag:'Өнер',title:'Ауыз әдебиетінің заманауи мәні',excerpt:'Жыраулар дәстүрі мен ауыз әдебиетінің бүгінгі орны.',date:'2022 · Желтоқсан',read:'8 мин'},
+  {tag:'Алаш',title:'Ахмет Байтұрсынов: тіл реформаторы',excerpt:'Байтұрсыновтың қазақ алфавитіне қосқан тарихи үлесі.',date:'2022 · Қыркүйек',read:'18 мин'}
+];
+
+function renderArticles() {
+  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
+    <div class="article-card reveal">
+      <span class="article-tag">${a.tag}</span>
+      <div class="article-title">${a.title}</div>
+      <div class="article-excerpt">${a.excerpt}</div>
+      <div class="article-meta"><span class="article-date">${a.date}</span><span class="article-read">${a.read} оқу →</span></div>
+    </div>`).join('');
+}
+
+/* ===== UI ===== */
+function showTab(tab, btn) {
+  document.querySelectorAll('.gallery-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('photoGrid').style.display = tab==='photos' ? 'grid' : 'none';
+  document.getElementById('videoGrid').style.display = tab==='video' ? 'grid' : 'none';
+}
+function setLang(lang, btn) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleMobile() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+  document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
   });
-},300);
+}, {passive:true});
+
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeReader(); });
+
+/* ===== INIT ===== */
+loadPoems();
+loadTracks();
+renderArticles();
+setTimeout(() => {
+  document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
+  });
+}, 300);
 </script>
 </body>
 </html>
