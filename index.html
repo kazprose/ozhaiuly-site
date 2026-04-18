@@ -623,8 +623,47 @@ const articles = [
   {tag:'Алаш',title:'Ахмет Байтұрсынов: тіл реформаторы',excerpt:'Байтұрсыновтың қазақ алфавитіне қосқан тарихи үлесі.',date:'2022 · Қыркүйек',read:'18 мин'}
 ];
 
-function renderArticles() {
-  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
+async function renderArticles() {
+  try {
+    const res = await fetch(
+      'https://api.github.com/repos/' + REPO + '/contents/content/research'
+    );
+    if (!res.ok) throw new Error();
+    const files = await res.json();
+    if (!Array.isArray(files) || !files.length) throw new Error();
+
+    const articles = await Promise.all(files.map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
+      const meta = {};
+      const parts = txt.split('---').filter(Boolean);
+      parts[0].trim().split('\n').forEach(line => {
+        const [k,...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
+      });
+      meta._body = (parts[1]||'').trim();
+      return meta;
+    }));
+
+    document.getElementById('articlesGrid').innerHTML = articles.map(a => `
+      <div class="article-card reveal">
+        <span class="article-tag">${a.tag||'Мәдениет'}</span>
+        <div class="article-title">${a.title||''}</div>
+        <div class="article-excerpt">${(a._body||'').split('\n')[0]||''}</div>
+        <div class="article-meta">
+          <span class="article-date">${a.year||2024}</span>
+          <span class="article-read">${a.read_time||'10'} мин оқу →</span>
+        </div>
+      </div>`).join('');
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+    });
+  } catch(e) {
+    document.getElementById('articlesGrid').innerHTML =
+      '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Зерттеулер қосылмаған.</div>';
+  }
+}  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
     <div class="article-card reveal">
       <span class="article-tag">${a.tag}</span>
       <div class="article-title">${a.title}</div>
