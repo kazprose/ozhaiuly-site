@@ -1,0 +1,71 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+locale: 'kk'
+
+collections:
+
+  - name: "poems"
+    label: "🖊 Өлеңдер"
+    folder: "content/poems"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Атауы", name: "title", widget: "string" }
+      - label: "Санат"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Лирика", value: "lirika" }
+          - { label: "Философия", value: "filosofia" }
+          - { label: "Тарихи", value: "tarihi" }
+          - { label: "Табиғат", value: "tabigat" }
+      - { label: "Жылы", name: "year", widget: "number", default: 2024 }
+      - { label: "Өлең мәтіні", name: "body", widget: "markdown" }
+
+  - name: "songs"
+    label: "🎵 Әндер"
+    folder: "content/songs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Ән атауы", name: "title", widget: "string" }
+      - { label: "Альбом", name: "album", widget: "string", required: false }
+      - { label: "Жылы", name: "year", widget: "number" }
+      - { label: "Ұзақтығы (мысалы: 3:47)", name: "duration", widget: "string" }
+      - { label: "Аудио файл (MP3)", name: "audio", widget: "file", required: false }
+      - { label: "Сипаттама", name: "body", widget: "markdown", required: false }
+
+  - name: "research"
+    label: "📚 Зерттеулер"
+    folder: "content/research"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Тақырып", name: "title", widget: "string" }
+      - label: "Тег"
+        name: "tag"
+        widget: "select"
+        options: ["Алаш", "Өнер", "Тарих", "Мәдениет", "Тіл"]
+      - { label: "Оқу уақыты (мин)", name: "read_time", widget: "number", default: 10 }
+      - { label: "Мақала мәтіні", name: "body", widget: "markdown" }
+
+  - name: "settings"
+    label: "⚙️ Сайт баптаулары"
+    files:
+      - label: "Hero секциясы"
+        name: "hero"
+        file: "content/settings/hero.md"
+        fields:
+          - { label: "Тақырыптама", name: "tagline", widget: "text" }
+          - { label: "Портрет суреті", name: "portrait", widget: "image" }
+      - label: "Автор туралы"
+        name: "about"
+        file: "content/settings/about.md"
+        fields:
+          - { label: "Өмірбаян", name: "bio", widget: "markdown" }
+          - { label: "Миссия дәйексөзі", name: "mission", widget: "text" }
