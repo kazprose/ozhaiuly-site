@@ -522,8 +522,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
             </div>
             <div class="form-group full">
               <label class="form-label">Басты сурет URL (hero_image)</label>
-              <input class="form-input" id="researchHeroImage" placeholder="https://ozhaiuly.kz/images/portrait.jpg">
-              <div style="font-size:11px;color:var(--text3);margin-top:6px">Бас бет суретінің URL-і. Бос қалдырылса — portrait.jpg қолданылады.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input class="form-input" id="researchHeroImage" placeholder="https://ozhaiuly.kz/images/portrait.jpg" style="flex:1">
+                <label class="img-file-btn" style="white-space:nowrap;cursor:pointer">
+                  📎 Жүктеу
+                  <input type="file" accept=".jpg,.jpeg,.png,.webp" style="display:none" onchange="uploadHeroImage(this)">
+                </label>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px" id="heroUploadStatus">Бас бет суретінің URL-і. Бос қалдырылса — portrait.jpg қолданылады.</div>
             </div>
             <div class="form-group full">
               <label class="form-label">Мақала мәтіні *</label>
@@ -1633,6 +1639,32 @@ function insertImgFromUrl() {
   editor.focus();
   document.execCommand('insertHTML', false, `<img src="${url}" alt="сурет" style="max-width:100%">`);
   document.getElementById('imgUrlInput').value = '';
+}
+
+async function uploadHeroImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('heroUploadStatus');
+  statusEl.textContent = '⏳ Жүктелуде...';
+  statusEl.style.color = 'var(--gold)';
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const fname = 'hero-' + Date.now() + '.' + ext;
+    const path = 'images/' + fname;
+    try {
+      await saveFile(path, base64Data(e.target.result), null);
+      const url = 'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' + path;
+      document.getElementById('researchHeroImage').value = url;
+      statusEl.textContent = '✓ Жүктелді: ' + fname;
+      statusEl.style.color = 'var(--gold)';
+    } catch(err) {
+      statusEl.textContent = '✗ Қате: ' + (err.message || err);
+      statusEl.style.color = '#e05555';
+    }
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
 }
 
 async function uploadAndInsertImg(input) {
