@@ -743,10 +743,10 @@ async function loadPhotos() {
   const grid = document.getElementById('photoGrid');
   const REPO = 'kazprose/ozhaiuly-site';
   try {
-    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/images/uploads');
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/images');
     if (!res.ok) throw new Error();
     const files = await res.json();
-    const imgs = files.filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f.name));
+    const imgs = files.filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name));
     if (!imgs.length) { grid.innerHTML = '<div class="photo-item"><div class="photo-item-placeholder">◈</div></div>'; return; }
     grid.innerHTML = imgs.map((f, i) =>
       `<div class="photo-item"${i===0?' style="min-height:320px"':''}>
@@ -756,6 +756,49 @@ async function loadPhotos() {
   } catch(e) {
     grid.innerHTML = '<div class="photo-item" style="min-height:320px"><img src="images/NEW_SAR_3880.JPG" alt="Ықылас Ожайұлы"></div>';
   }
+}
+
+async function loadVideos() {
+  const grid = document.getElementById('videoGrid');
+  try {
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/videos');
+    if (!res.ok) throw new Error();
+    const files = await res.json();
+    const mds = files.filter(f => f.name.endsWith('.md'));
+    if (!mds.length) return;
+    const videos = await Promise.all(mds.map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
+      const meta = {};
+      const parts = txt.split('---').filter(Boolean);
+      parts[0].trim().split('\n').forEach(line => {
+        const [k, ...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
+      });
+      return meta;
+    }));
+    const validVideos = videos.filter(v => v.url);
+    if (!validVideos.length) return;
+    grid.innerHTML = validVideos.map(v => {
+      const id = ytId(v.url);
+      if (!id) return '';
+      return `<div style="background:var(--surface);border:1px solid var(--border)">
+        <div style="position:relative;padding-top:56.25%">
+          <iframe style="position:absolute;inset:0;width:100%;height:100%;border:none"
+            src="https://www.youtube.com/embed/${id}" loading="lazy"
+            allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        ${v.title ? `<div style="padding:12px 16px;font-family:var(--serif);font-size:15px;color:var(--sand)">${v.title}</div>` : ''}
+        ${(v.location||v.year) ? `<div style="padding:0 16px 12px;font-size:11px;color:var(--text3);letter-spacing:1px">${[v.location,v.year].filter(Boolean).join(' · ')}</div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e) { /* silent — no videos yet */ }
+}
+
+function ytId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
 }
 
 function showTab(tab, btn) {
@@ -848,6 +891,7 @@ loadPoems();
 loadTracks();
 loadResearchFromGitHub();
 loadPhotos();
+loadVideos();
 setTimeout(() => {
   document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
