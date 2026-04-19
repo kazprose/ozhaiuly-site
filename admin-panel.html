@@ -417,13 +417,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
               <input class="form-input" id="songDuration" placeholder="3:47">
             </div>
             <div class="form-group full">
-              <label class="form-label">Аудио файл жолы (GitHub-тағы)</label>
-              <input class="form-input" id="songAudio" placeholder="/audio/dala-zhely.mp3">
-              <div style="font-size:11px;color:var(--text3);margin-top:6px">Аудио файлды GitHub-тағы /audio/ қалтасына жүктеп, жолын осында жазыңыз</div>
+              <label class="form-label">Аудио файл</label>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <input class="form-input" id="songAudio" placeholder="/audio/dala-zhely.mp3" style="flex:1;min-width:200px">
+                <div style="position:relative;flex-shrink:0">
+                  <button class="btn-outline btn-sm" id="audioUploadBtn" style="position:relative;overflow:hidden;cursor:pointer">
+                    📎 MP3 жүктеу
+                    <input type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a"
+                           onchange="uploadAudioFile(this)"
+                           style="position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0">
+                  </button>
+                </div>
+              </div>
+              <div id="audioUploadStatus" style="font-size:11px;color:var(--text3);margin-top:6px">Файлды таңдасаңыз, /audio/ қалтасына жүктеліп, жол автоматты толтырылады</div>
             </div>
             <div class="form-group full">
               <label class="form-label">Сипаттама (міндетті емес)</label>
               <textarea class="form-textarea" id="songDesc" placeholder="Ән туралы қысқаша..." style="min-height:100px"></textarea>
+            </div>
+            <div class="form-group full" style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+              <label class="form-label" style="color:var(--gold)">SEO</label>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Meta Description</label>
+              <textarea class="form-textarea" id="songMetaDesc" placeholder="Ән туралы қысқаша сипаттама (160 таңбаға дейін)..." style="min-height:80px"></textarea>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Google іздеу нәтижесінде көрінеді</div>
             </div>
           </div>
           <div class="form-actions">
@@ -534,6 +552,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
                   <span style="color:var(--text3)">Ctrl+B қалың · Ctrl+I курсив</span>
                 </div>
               </div>
+            </div>
+          </div>
+          <div class="form-group full" style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+            <label class="form-label" style="color:var(--gold)">SEO</label>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Meta Description</label>
+              <textarea class="form-textarea" id="researchMetaDesc" placeholder="Зерттеу туралы қысқаша сипаттама (160 таңбаға дейін)..." style="min-height:80px"></textarea>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Google іздеу нәтижесінде көрінеді</div>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Keywords</label>
+              <input class="form-input" id="researchKeywords" placeholder="Алаш, қазақ әдебиеті, тарих">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Үтірмен бөліңіз</div>
             </div>
           </div>
           <div class="form-actions">
@@ -991,6 +1024,7 @@ function showSongForm(song = null) {
     document.getElementById('songDuration').value = song.duration || '';
     document.getElementById('songAudio').value = song.audio || '';
     document.getElementById('songDesc').value = song._body || '';
+    document.getElementById('songMetaDesc').value = song.meta_desc || '';
   } else {
     document.getElementById('songFormTitle').innerHTML = 'Жаңа <em>ән</em>';
     document.getElementById('songEditPath').value = '';
@@ -1000,6 +1034,7 @@ function showSongForm(song = null) {
     document.getElementById('songDuration').value = '';
     document.getElementById('songAudio').value = '';
     document.getElementById('songDesc').value = '';
+    document.getElementById('songMetaDesc').value = '';
   }
 }
 
@@ -1020,6 +1055,7 @@ async function saveSong() {
   const duration = document.getElementById('songDuration').value.trim();
   const audio = document.getElementById('songAudio').value.trim();
   const desc = document.getElementById('songDesc').value.trim();
+  const metaDesc = document.getElementById('songMetaDesc').value.trim();
   const editPath = document.getElementById('songEditPath').value;
 
   if (!title) { showToast('Ән атауы міндетті!', 'error'); return; }
@@ -1028,6 +1064,7 @@ async function saveSong() {
   if (album) fields.album = album;
   if (duration) fields.duration = duration;
   if (audio) fields.audio = audio;
+  if (metaDesc) fields.meta_desc = metaDesc;
 
   const fm = makeFrontmatter(fields);
   const fileContent = fm + (desc || '');
@@ -1075,6 +1112,8 @@ function showResearchForm(research = null) {
     document.getElementById('researchTag').value = research.tag || 'alash';
     document.getElementById('researchReadTime').value = research.read_time || 10;
     document.getElementById('researchHeroImage').value = research.hero_image || '';
+    document.getElementById('researchMetaDesc').value = research.meta_desc || '';
+    document.getElementById('researchKeywords').value = research.keywords || '';
     editor.innerHTML = research._body || '';
   } else {
     document.getElementById('researchFormTitle').innerHTML = 'Жаңа <em>зерттеу</em>';
@@ -1083,6 +1122,8 @@ function showResearchForm(research = null) {
     document.getElementById('researchTag').value = 'alash';
     document.getElementById('researchReadTime').value = 10;
     document.getElementById('researchHeroImage').value = '';
+    document.getElementById('researchMetaDesc').value = '';
+    document.getElementById('researchKeywords').value = '';
     editor.innerHTML = '';
   }
   updateWordCount();
@@ -1103,6 +1144,8 @@ async function saveResearch() {
   const tag = document.getElementById('researchTag').value;
   const readTime = document.getElementById('researchReadTime').value;
   const heroImage = document.getElementById('researchHeroImage').value.trim();
+  const metaDesc = document.getElementById('researchMetaDesc').value.trim();
+  const keywords = document.getElementById('researchKeywords').value.trim();
   const editor = document.getElementById('researchEditor');
   const content = editor.innerHTML.trim();
   const editPath = document.getElementById('researchEditPath').value;
@@ -1114,6 +1157,8 @@ async function saveResearch() {
   const slug = toSlug(title);
   const fmFields = { title, tag, read_time: readTime };
   if (heroImage) fmFields.hero_image = heroImage;
+  if (metaDesc) fmFields.meta_desc = metaDesc;
+  if (keywords) fmFields.keywords = keywords;
   const fm = makeFrontmatter(fmFields);
   const fileContent = fm + content;
   const mdPath = editPath || `content/research/${slug}.md`;
@@ -1128,7 +1173,7 @@ async function saveResearch() {
     // 2. Жеке HTML беті жасау
     const htmlPath = `research/${slug}.html`;
     const htmlSha = await getFileSha(htmlPath);
-    const htmlContent = generateResearchHTML(title, tag, readTime, heroImage, content, slug);
+    const htmlContent = generateResearchHTML(title, tag, readTime, heroImage, content, slug, metaDesc, keywords);
     await saveFile(htmlPath, htmlContent, htmlSha);
 
     showToast(`✓ Зерттеу сақталды! /research/${slug}.html`, 'success');
@@ -1139,11 +1184,11 @@ async function saveResearch() {
   }
 }
 
-function generateResearchHTML(title, tag, readTime, heroImage, content, slug) {
+function generateResearchHTML(title, tag, readTime, heroImage, content, slug, metaDesc = '', keywords = '') {
   const tagNames = {alash:'Алаш', oner:'Өнер', tarih:'Тарих', madeniyet:'Мәдениет', til:'Тіл'};
   const tagLabel = tagNames[tag] || tag || '';
   const hero = heroImage || 'https://ozhaiuly.kz/images/portrait.jpg';
-  const desc = content.replace(/<[^>]*>/g, '').substring(0, 160);
+  const desc = metaDesc || content.replace(/<[^>]*>/g, '').substring(0, 160);
   const url = `https://ozhaiuly.kz/research/${slug}.html`;
 
   // Мазмұн кестесі
@@ -1185,6 +1230,7 @@ function generateResearchHTML(title, tag, readTime, heroImage, content, slug) {
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${title} — Ықылас Ожайұлы">
 <meta name="twitter:description" content="${desc}">
+${keywords ? `<meta name="keywords" content="${keywords}">` : ''}
 <meta name="twitter:image" content="${hero}">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Article","headline":"${title}","author":{"@type":"Person","name":"Ықылас Ожайұлы","url":"https://ozhaiuly.kz"},"inLanguage":"kk","url":"${url}"}
@@ -1450,6 +1496,39 @@ async function uploadAndInsertImg(input) {
 
 function base64Data(dataUrl) {
   return dataUrl.split(',')[1];
+}
+
+async function uploadAudioFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('audioUploadStatus');
+  const btn = document.getElementById('audioUploadBtn');
+  statusEl.style.color = 'var(--gold)';
+  statusEl.textContent = '⏳ Жүктелуде...';
+  btn.disabled = true;
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result.split(',')[1];
+    const filename = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+    const path = `audio/${filename}`;
+    try {
+      const existingSha = await getFileSha(path);
+      const body = { message: `Add audio: ${filename}`, content: base64, branch: BRANCH };
+      if (existingSha) body.sha = existingSha;
+      await ghFetch(`repos/${REPO}/contents/${path}`, 'PUT', body);
+      const audioPath = `/audio/${filename}`;
+      document.getElementById('songAudio').value = audioPath;
+      statusEl.style.color = 'var(--green)';
+      statusEl.textContent = `✓ Жүктелді: ${audioPath}`;
+    } catch(err) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = 'Қате: ' + err.message;
+    }
+    btn.disabled = false;
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
 }
 
 // Override saveResearch to use editor HTML
