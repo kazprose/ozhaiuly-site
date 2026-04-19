@@ -25,6 +25,9 @@
 <meta name="twitter:title" content="Ықылас Ожайұлы — Авторлық сайты">
 <meta name="twitter:description" content="Ақын, композитор, әнші, өнер зерттеушісі және Алаштанушы.">
 <meta name="twitter:image" content="https://ozhaiuly.kz/images/NEW_SAR_3880.JPG">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -392,13 +395,16 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       <div class="ornament reveal"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
       <div class="contact-email reveal">ykylas@ozhaiuly.kz</div>
       <div class="contact-form reveal">
-        <div class="form-row">
-          <div class="form-group"><label>Атыңыз</label><input type="text" placeholder="Аты-жөніңіз"></div>
-          <div class="form-group"><label>Email</label><input type="email" placeholder="email@mail.com"></div>
-        </div>
-        <div class="form-group"><label>Тақырып</label><input type="text" placeholder="Хат тақырыбы"></div>
-        <div class="form-group"><label>Хабарлама</label><textarea rows="5" placeholder="Хабарламаңызды жазыңыз..."></textarea></div>
-        <button class="btn-primary" style="width:100%;padding:14px">Жіберу</button>
+        <form id="contactForm" onsubmit="submitForm(event)">
+          <div class="form-row">
+            <div class="form-group"><label>Атыңыз</label><input type="text" id="cfName" name="name" placeholder="Аты-жөніңіз" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="cfEmail" name="email" placeholder="email@mail.com" required></div>
+          </div>
+          <div class="form-group"><label>Тақырып</label><input type="text" id="cfSubject" name="subject" placeholder="Хат тақырыбы"></div>
+          <div class="form-group"><label>Хабарлама</label><textarea id="cfMessage" name="message" rows="5" placeholder="Хабарламаңызды жазыңыз..." required></textarea></div>
+          <div id="formMsg" style="display:none;margin-bottom:12px;padding:12px 16px;font-size:13px;border-left:3px solid"></div>
+          <button class="btn-primary" id="cfSubmit" type="submit" style="width:100%;padding:14px">Жіберу</button>
+        </form>
       </div>
       <div class="social-links reveal">
         <a href="#" class="social-link">f</a>
@@ -628,23 +634,55 @@ function setVolume(v) {
 }
 
 /* ===== RESEARCH ===== */
-const articles = [
-  {tag:'Алаш',title:'Алаш қозғалысының рухани мұрасы',excerpt:'Алаш зиялыларының ұлттық санаға қосқан үлесін зерттеу.',date:'2024 · Маусым',read:'15 мин'},
-  {tag:'Өнер',title:'Қазақ халық музыкасының жаңару жолдары',excerpt:'Дәстүрлі қазақ музыкасын заманауи форматта сақтау.',date:'2023 · Желтоқсан',read:'12 мин'},
-  {tag:'Тарих',title:'Дала мәдениетінің тарихи-философиялық негіздері',excerpt:'Көшпелі өркениеттің болмыстық ойлар жүйесі.',date:'2023 · Қыркүйек',read:'20 мин'},
-  {tag:'Мәдениет',title:'Тіл — ұлттың жаны',excerpt:'Қазіргі жаһандану кезеңінде ана тілін сақтаудың маңызы.',date:'2023 · Наурыз',read:'10 мин'},
-  {tag:'Өнер',title:'Ауыз әдебиетінің заманауи мәні',excerpt:'Жыраулар дәстүрі мен ауыз әдебиетінің бүгінгі орны.',date:'2022 · Желтоқсан',read:'8 мин'},
-  {tag:'Алаш',title:'Ахмет Байтұрсынов: тіл реформаторы',excerpt:'Байтұрсыновтың қазақ алфавитіне қосқан тарихи үлесі.',date:'2022 · Қыркүйек',read:'18 мин'}
-];
+const tagNames = {alash:'Алаш', oner:'Өнер', tarih:'Тарих', madeniyet:'Мәдениет', til:'Тіл'};
 
-function renderArticles() {
-  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
-    <div class="article-card reveal">
-      <span class="article-tag">${a.tag}</span>
-      <div class="article-title">${a.title}</div>
-      <div class="article-excerpt">${a.excerpt}</div>
-      <div class="article-meta"><span class="article-date">${a.date}</span><span class="article-read">${a.read} оқу →</span></div>
-    </div>`).join('');
+async function loadResearch() {
+  try {
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/research');
+    if (!res.ok) throw new Error();
+    const files = await res.json();
+    if (!Array.isArray(files) || !files.length) throw new Error();
+    const items = await Promise.all(files.filter(f => f.name.endsWith('.md')).map(async f => {
+      const r = await fetch(f.download_url);
+      const txt = await r.text();
+      const meta = {};
+      const parts = txt.split('---').filter(Boolean);
+      parts[0].trim().split('
+').forEach(line => {
+        const [k, ...v] = line.split(':');
+        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
+      });
+      meta._slug = f.name.replace('.md', '');
+      meta._body = (parts[1] || '').trim();
+      return meta;
+    }));
+    renderArticles(items);
+  } catch(e) {
+    renderArticles([]);
+  }
+}
+
+function renderArticles(list) {
+  const grid = document.getElementById('articlesGrid');
+  if (!list || !list.length) {
+    grid.innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Зерттеулер қосылмаған.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(a => {
+    const tag = tagNames[a.tag] || a.tag || '';
+    const excerpt = (a._body || '').replace(/<[^>]*>/g, '').substring(0, 120) + '...';
+    const readTime = a.read_time ? a.read_time + ' мин' : '';
+    return `
+    <a class="article-card reveal" href="/research/${a._slug}.html" style="text-decoration:none;color:inherit;display:block">
+      <span class="article-tag">${tag}</span>
+      <div class="article-title">${a.title || ''}</div>
+      <div class="article-excerpt">${excerpt}</div>
+      <div class="article-meta">
+        <span class="article-date">${a.year || ''}</span>
+        <span class="article-read">${readTime} оқу →</span>
+      </div>
+    </a>`;
+  }).join('');
 }
 
 /* ===== UI ===== */
@@ -670,10 +708,73 @@ window.addEventListener('scroll', () => {
 
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeReader(); });
 
+/* ===== FORMSPREE CONTACT ===== */
+async function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cfSubmit');
+  const msg = document.getElementById('formMsg');
+  btn.disabled = true;
+  btn.textContent = 'Жіберілуде...';
+  msg.style.display = 'none';
+  try {
+    const res = await fetch('https://formspree.io/f/xgorypwd', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        name: document.getElementById('cfName').value,
+        email: document.getElementById('cfEmail').value,
+        subject: document.getElementById('cfSubject').value,
+        message: document.getElementById('cfMessage').value
+      })
+    });
+    if (res.ok) {
+      msg.textContent = 'Хабарлама жіберілді! ✓';
+      msg.style.cssText = 'display:block;padding:12px 16px;font-size:13px;border-left:3px solid #5a9e6f;background:rgba(90,158,111,0.1);color:#8fd4a8;margin-bottom:12px';
+      document.getElementById('contactForm').reset();
+    } else {
+      throw new Error();
+    }
+  } catch(_) {
+    msg.textContent = 'Қате орын алды. Кейінірек қайталап көріңіз.';
+    msg.style.cssText = 'display:block;padding:12px 16px;font-size:13px;border-left:3px solid #e05a5a;background:rgba(224,90,90,0.1);color:#f0a0a0;margin-bottom:12px';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Жіберу';
+}
+
+/* ===== AUDIO EVENTS ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.getElementById('htmlAudio');
+  if (!audio) return;
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    const pct = (audio.currentTime / audio.duration) * 100;
+    const pf = document.getElementById('progressFill');
+    const te = document.getElementById('timeElapsed');
+    if (pf) pf.style.width = pct + '%';
+    if (te) te.textContent = fmtTime(audio.currentTime);
+  });
+  audio.addEventListener('loadedmetadata', () => {
+    const td = document.getElementById('timeDuration');
+    if (td) td.textContent = fmtTime(audio.duration);
+  });
+  audio.addEventListener('ended', () => { nextTrack(); });
+  audio.addEventListener('play', () => {
+    playing = true;
+    document.getElementById('playBtn').textContent = '⏸';
+    renderTracks();
+  });
+  audio.addEventListener('pause', () => {
+    playing = false;
+    document.getElementById('playBtn').textContent = '▶';
+    renderTracks();
+  });
+});
+
 /* ===== INIT ===== */
 loadPoems();
 loadTracks();
-renderArticles();
+loadResearch();
 setTimeout(() => {
   document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');

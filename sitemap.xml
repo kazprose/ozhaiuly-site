@@ -51,18 +51,18 @@
 
   <!-- Жеке өлеңдер -->
   <url>
-    <loc>https://ozhaiuly.kz/#poem-мен-аяқ-астынан-«құдай»-боп-кетсем</loc>
+    <loc>https://ozhaiuly.kz/poems/%D0%BC%D0%B5%D0%BD-%D0%B0%D1%8F%D2%9B-%D0%B0%D1%81%D1%82%D1%8B%D0%BD%D0%B0%D0%BD-%C2%AB%D2%9B%D1%83%D0%B4%D0%B0%D0%B9%C2%BB-%D0%B1%D0%BE%D0%BF-%D0%BA%D0%B5%D1%82%D1%81%D0%B5%D0%BC.html</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 
   <!-- Жеке зерттеулер -->
   <url>
-    <loc>https://ozhaiuly.kz/#research-k-o-sh-u-zh-n-i</loc>
+    <loc>https://ozhaiuly.kz/research/k-o-sh-u-zh-n-i.html</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 
 </urlset>
