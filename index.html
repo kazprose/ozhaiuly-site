@@ -376,15 +376,11 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       <button class="gallery-tab" onclick="showTab('video',this)">Бейне</button>
     </div>
     <div class="photo-grid reveal" id="photoGrid">
-      <div class="photo-item" style="min-height:320px"><img src="images/NEW_SAR_3880.JPG" alt="Ықылас Ожайұлы" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
-      <div class="photo-item"><div class="photo-item-placeholder">◈</div></div>
+      <div class="photo-item" style="min-height:320px;display:flex;align-items:center;justify-content:center"><span style="color:var(--text3);font-size:13px">Жүктелуде…</span></div>
     </div>
-    <div class="video-grid" id="videoGrid"></div>
+    <div class="video-grid" id="videoGrid">
+      <div style="grid-column:1/-1;padding:48px 0;text-align:center;color:var(--text3);font-size:13px;letter-spacing:1px">Жақын арада қосылады</div>
+    </div>
   </div>
 </section>
 
@@ -743,6 +739,25 @@ function renderArticles(list) {
 }
 
 /* ===== UI ===== */
+async function loadPhotos() {
+  const grid = document.getElementById('photoGrid');
+  const REPO = 'kazprose/ozhaiuly-site';
+  try {
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/images/uploads');
+    if (!res.ok) throw new Error();
+    const files = await res.json();
+    const imgs = files.filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f.name));
+    if (!imgs.length) { grid.innerHTML = '<div class="photo-item"><div class="photo-item-placeholder">◈</div></div>'; return; }
+    grid.innerHTML = imgs.map((f, i) =>
+      `<div class="photo-item"${i===0?' style="min-height:320px"':''}>
+        <img src="${f.download_url}" alt="Ықылас Ожайұлы" loading="${i===0?'eager':'lazy'}">
+      </div>`
+    ).join('');
+  } catch(e) {
+    grid.innerHTML = '<div class="photo-item" style="min-height:320px"><img src="images/NEW_SAR_3880.JPG" alt="Ықылас Ожайұлы"></div>';
+  }
+}
+
 function showTab(tab, btn) {
   document.querySelectorAll('.gallery-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -832,6 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
 loadPoems();
 loadTracks();
 loadResearchFromGitHub();
+loadPhotos();
 setTimeout(() => {
   document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
