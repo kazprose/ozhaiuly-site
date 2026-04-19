@@ -32,9 +32,9 @@ html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-fam
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(13,11,7,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{font-family:var(--serif);font-size:18px;color:var(--gold);letter-spacing:2px;font-weight:300;text-decoration:none}
 .nav-back{display:flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s}.nav-back:hover{color:var(--gold)}
-.hero{width:100%;height:50vh;min-height:300px;object-fit:cover;object-position:center top;filter:sepia(20%) contrast(1.05) brightness(0.7);display:block}
-.hero-overlay{position:absolute;top:0;left:0;right:0;height:50vh;min-height:300px;background:linear-gradient(to bottom,transparent 40%,var(--bg) 100%);pointer-events:none}
-.hero-wrap{position:relative;margin-top:60px}
+.hero{width:100%;height:400px;max-height:400px;object-fit:cover;object-position:center top;filter:sepia(20%) contrast(1.05) brightness(0.9);display:block;border-radius:4px}
+.hero-overlay{display:none}
+.hero-wrap{margin-top:80px;margin-bottom:32px}
 .research-page{max-width:780px;margin:0 auto;padding:60px 48px 80px}
 .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:11px;color:var(--text3);letter-spacing:1px;flex-wrap:wrap}
 .breadcrumb a{color:var(--text3);text-decoration:none;transition:color 0.3s}.breadcrumb a:hover{color:var(--gold)}
@@ -67,7 +67,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:fl
 footer{background:var(--bg2);padding:32px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:80px}
 .footer-logo{font-family:var(--serif);font-size:18px;color:var(--gold);font-weight:300;text-decoration:none}.footer-copy{font-size:11px;color:var(--text3)}
 .toast-copy{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold);color:var(--gold);padding:10px 20px;font-size:12px;display:none;z-index:999}
-@media(max-width:768px){nav,footer{padding:16px 24px}.research-page{padding:40px 24px 60px}footer{flex-direction:column;gap:12px;text-align:center}.hero,.hero-overlay{height:35vh}}
+@media(max-width:768px){nav,footer{padding:16px 24px}.research-page{padding:40px 24px 60px}footer{flex-direction:column;gap:12px;text-align:center}.hero{height:220px;max-height:220px}}
 </style>
 </head>
 <body>
