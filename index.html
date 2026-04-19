@@ -415,16 +415,34 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
 
 <script>
 const REPO = 'kazprose/ozhaiuly-site';
+const CACHE_TTL = 30 * 60 * 1000;
+
+function cacheGet(key) {
+  try {
+    const t = localStorage.getItem(key + '_t');
+    const v = localStorage.getItem(key);
+    if (v && t && (Date.now() - parseInt(t)) < CACHE_TTL) return JSON.parse(v);
+  } catch(e) {}
+  return null;
+}
+function cacheSet(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); localStorage.setItem(key + '_t', String(Date.now())); } catch(e) {}
+}
+function cacheFallback(key) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch(e) { return null; }
+}
 
 /* ===== POEMS ===== */
 let allPoems = [];
 
 async function loadPoems() {
+  const cached = cacheGet('poems');
+  if (cached) { allPoems = cached; renderPoems(allPoems); return; }
   try {
     const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/poems');
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error(res.status);
     const files = await res.json();
-    if (!Array.isArray(files) || !files.length) throw new Error();
+    if (!Array.isArray(files) || !files.length) throw new Error('empty');
     allPoems = await Promise.all(files.map(async f => {
       const r = await fetch(f.download_url);
       const txt = await r.text();
@@ -435,13 +453,16 @@ async function loadPoems() {
         if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
       });
       meta.content = (parts[1]||'').trim();
-      meta._slug = f.name.replace('.md',''); // файл атауынан slug алу
+      meta._slug = f.name.replace('.md','');
       return meta;
     }));
+    cacheSet('poems', allPoems);
     renderPoems(allPoems);
   } catch(e) {
+    const fb = cacheFallback('poems');
+    if (fb) { allPoems = fb; renderPoems(allPoems); return; }
     allPoems = [];
-    document.getElementById('poemsGrid').innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер қосылмаған.</div>';
+    document.getElementById('poemsGrid').innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер жүктелмеді. Бетті жаңарту.</div>';
   }
 }
 
@@ -565,11 +586,18 @@ let demoProg = 0;
 let demoTimer = null;
 
 async function loadTracks() {
+  const cached = cacheGet('songs');
+  if (cached) {
+    tracks = cached;
+    const el = document.getElementById('trackCount');
+    if (el) el.textContent = tracks.length + ' ән';
+    renderTracks(); setPlayerTitle(0); return;
+  }
   try {
     const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/songs');
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error(res.status);
     const files = await res.json();
-    if (!Array.isArray(files) || !files.length) throw new Error();
+    if (!Array.isArray(files) || !files.length) throw new Error('empty');
     tracks = await Promise.all(files.map(async f => {
       const r = await fetch(f.download_url);
       const txt = await r.text();
@@ -581,20 +609,20 @@ async function loadTracks() {
       });
       return meta;
     }));
+    cacheSet('songs', tracks);
     const el = document.getElementById('trackCount');
     if (el) el.textContent = tracks.length + ' ән';
-    renderTracks();
-    setPlayerTitle(0);
+    renderTracks(); setPlayerTitle(0);
   } catch(e) {
-    tracks = [
-      {title:'Дала желі',duration:'3:47',album:'Дала сазы',year:'2023'},
-      {title:'Мәңгілік жол',duration:'4:12',album:'Дала сазы',year:'2023'},
-      {title:'Анаға хат',duration:'3:55',album:'Дала сазы',year:'2018'},
-    ];
-    const el = document.getElementById('trackCount');
-    if (el) el.textContent = tracks.length + ' ән';
+    const fb = cacheFallback('songs');
+    if (fb) {
+      tracks = fb;
+      const el = document.getElementById('trackCount');
+      if (el) el.textContent = tracks.length + ' ән';
+      renderTracks(); setPlayerTitle(0); return;
+    }
+    tracks = [];
     renderTracks();
-    setPlayerTitle(0);
   }
 }
 
@@ -686,11 +714,13 @@ function setVolume(v) {
 const tagNames = {alash:'Алаш', oner:'Өнер', tarih:'Тарих', madeniyet:'Мәдениет', til:'Тіл'};
 
 async function loadResearchFromGitHub() {
+  const cached = cacheGet('research');
+  if (cached) { renderArticles(cached); return; }
   try {
     const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/research');
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error(res.status);
     const files = await res.json();
-    if (!Array.isArray(files) || !files.length) throw new Error();
+    if (!Array.isArray(files) || !files.length) throw new Error('empty');
     const items = await Promise.all(files.filter(f => f.name.endsWith('.md')).map(async f => {
       const r = await fetch(f.download_url);
       const txt = await r.text();
@@ -704,9 +734,11 @@ async function loadResearchFromGitHub() {
       meta._body = (parts[1] || '').trim();
       return meta;
     }));
+    cacheSet('research', items);
     renderArticles(items);
   } catch(e) {
-    renderArticles([]);
+    const fb = cacheFallback('research');
+    renderArticles(fb || []);
   }
 }
 
