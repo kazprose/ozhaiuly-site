@@ -206,6 +206,9 @@ section{padding:100px 48px}
 .social-links{display:flex;justify-content:center;gap:24px;margin-top:48px}
 .social-link{width:40px;height:40px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text3);text-decoration:none;font-size:14px;transition:all 0.3s}
 .social-link:hover{border-color:var(--gold);color:var(--gold)}
+.go-top{position:fixed;bottom:32px;right:32px;width:44px;height:44px;background:var(--bg2);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all 0.3s;opacity:0;pointer-events:none;z-index:90;text-decoration:none}
+.go-top.visible{opacity:1;pointer-events:auto}
+.go-top:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);transform:translateY(-3px)}
 footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .footer-logo{font-family:var(--serif);font-size:20px;color:var(--gold);font-weight:300}
 .footer-copy{font-size:11px;color:var(--text3);letter-spacing:1px}
@@ -476,6 +479,8 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
     </div>
   </div>
 </section>
+
+<a href="#hero" class="go-top" id="goTop" title="Жоғарыға">◈</a>
 
 <footer>
   <div class="footer-logo">Ықылас Ожайұлы</div>
@@ -953,6 +958,7 @@ function closeMobile() { document.getElementById('mobileMenu').classList.remove(
 
 window.addEventListener('scroll', () => {
   document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+  document.getElementById('goTop').classList.toggle('visible', window.scrollY > 300);
   document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
   });
