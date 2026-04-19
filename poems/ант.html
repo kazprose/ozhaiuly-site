@@ -28,10 +28,18 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--gold)}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(13,11,7,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;justify-content:center;align-items:center;gap:48px;transition:all 0.4s;background:transparent}
+nav.scrolled{background:rgba(13,11,7,0.95);backdrop-filter:blur(12px);padding:14px 48px;border-bottom:1px solid var(--border)}
 .nav-logo{font-family:var(--serif);font-size:18px;color:var(--gold);letter-spacing:2px;font-weight:300;text-decoration:none}
-.nav-back{display:flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s}
-.nav-back:hover{color:var(--gold)}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;font-weight:300}
+.nav-links a:hover{color:var(--gold)}
+.hamburger{position:absolute;right:24px;display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:1px;background:var(--text);display:block}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(13,11,7,0.98);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:var(--serif);font-size:28px;color:var(--sand);text-decoration:none;letter-spacing:2px}
+
 .poem-page{max-width:680px;margin:0 auto;padding:120px 48px 80px}
 .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:32px;font-size:11px;color:var(--text3);letter-spacing:1px;flex-wrap:wrap}
 .breadcrumb a{color:var(--text3);text-decoration:none;transition:color 0.3s}
@@ -64,13 +72,29 @@ footer{background:var(--bg2);padding:32px 48px;border-top:1px solid var(--border
 .footer-logo{font-family:var(--serif);font-size:18px;color:var(--gold);font-weight:300;text-decoration:none}
 .footer-copy{font-size:11px;color:var(--text3)}
 .toast-copy{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold);color:var(--gold);padding:10px 20px;font-size:12px;display:none;z-index:999;white-space:nowrap}
-@media(max-width:768px){nav,footer{padding:16px 24px}.poem-page{padding:90px 24px 60px}footer{flex-direction:column;gap:12px;text-align:center}}
+@media(max-width:768px){nav,footer{padding:16px 24px}.poem-page{padding:90px 24px 60px}footer{flex-direction:column;gap:12px;text-align:center}.nav-links{display:none}.hamburger{display:flex}}
 </style>
 </head>
 <body>
-<nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/#about" onclick="closeMobile()">Автор туралы</a>
+  <a href="/#poetry" onclick="closeMobile()">Өлеңдер</a>
+  <a href="/#music" onclick="closeMobile()">Әндер</a>
+  <a href="/#research" onclick="closeMobile()">Зерттеулер</a>
+  <a href="/#gallery" onclick="closeMobile()">Галерея</a>
+  <a href="/#contact" onclick="closeMobile()">Байланыс</a>
+</div>
+<nav id="mainNav">
   <a href="/" class="nav-logo">Ықылас Ожайұлы</a>
-  <a href="/#poetry" class="nav-back">← Өлеңдерге оралу</a>
+  <ul class="nav-links">
+    <li><a href="/#about">Автор туралы</a></li>
+    <li><a href="/#poetry">Өлеңдер</a></li>
+    <li><a href="/#music">Әндер</a></li>
+    <li><a href="/#research">Зерттеулер</a></li>
+    <li><a href="/#gallery">Галерея</a></li>
+    <li><a href="/#contact">Байланыс</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
 </nav>
 <main class="poem-page">
   <div class="breadcrumb">
@@ -158,6 +182,11 @@ const CURRENT_SLUG = 'ант.md';
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const t=document.getElementById('toastCopy');t.style.display='block';setTimeout(()=>t.style.display='none',2000)})}
 async function loadMore(){try{const res=await fetch('https://api.github.com/repos/'+REPO+'/contents/content/poems');if(!res.ok)throw new Error();const files=await res.json();const others=files.filter(f=>f.name.endsWith('.md')&&f.name!==CURRENT_SLUG).slice(0,4);const poems=await Promise.all(others.map(async f=>{const r=await fetch(f.download_url);const txt=await r.text();const meta={};const parts=txt.split('---').filter(Boolean);parts[0].trim().split('\n').forEach(line=>{const[k,...v]=line.split(':');if(k)meta[k.trim()]=v.join(':').trim().replace(/^"|"$/g,'')});return{...meta,slug:f.name.replace('.md','')}}));const grid=document.getElementById('moreGrid');if(!poems.length){grid.innerHTML='';return}grid.innerHTML=poems.map(p=>`<a href="/poems/${p.slug}.html" class="more-card"><div class="more-card-cat">${p.tag||'Өлең'}</div><div class="more-card-title">${p.title||''}</div></a>`).join('')}catch(e){document.getElementById('moreGrid').innerHTML=''}}
 loadMore();
+</script>
+<script>
+window.addEventListener('scroll',()=>{document.getElementById('mainNav').classList.toggle('scrolled',scrollY>60)},{passive:true});
+function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open')}
+function closeMobile(){document.getElementById('mobileMenu').classList.remove('open')}
 </script>
 </body>
 </html>
