@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemap жаңарту</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0b07;--surface:#211e16;--gold:#c9a84c;--text:#f0e8d5;--text3:#7a6e58;--border:rgba(201,168,76,0.2);--green:#5a9e6f;--red:#e05a5a;--sans:'DM Sans',sans-serif}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);padding:40px 24px;max-width:600px;margin:0 auto}
+h1{font-size:20px;color:var(--gold);margin-bottom:8px;font-weight:300;letter-spacing:2px}
+p{font-size:13px;color:var(--text3);margin-bottom:24px}
+.field{display:block;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:var(--sans);font-size:14px;outline:none;margin-bottom:16px}
+input:focus{border-color:var(--gold)}
+button{padding:12px 28px;background:var(--gold);color:var(--bg);font-size:12px;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;font-family:var(--sans);font-weight:500}
+button:hover{opacity:0.9}
+.log{margin-top:24px;background:var(--surface);border:1px solid var(--border);padding:16px;font-size:12px;line-height:1.8;font-family:monospace;max-height:300px;overflow-y:auto}
+.ok{color:#8fd4a8}.err{color:#f0a0a0}.info{color:var(--gold)}
+</style>
+</head>
+<body>
+<h1>Sitemap жаңарту</h1>
+<p>GitHub-тан мазмұнды оқып, sitemap.xml автоматты жасайды.</p>
+<label class="field">GitHub Token</label>
+<input type="password" id="token" placeholder="ghp_xxxxxxxxxxxx">
+<button onclick="generateSitemap()">Sitemap жасау →</button>
+<div class="log" id="log" style="display:none"></div>
+
+<script>
+const REPO = 'kazprose/ozhaiuly-site';
+const BRANCH = 'main';
+const BASE_URL = 'https://ozhaiuly.kz';
+const TODAY = new Date().toISOString().split('T')[0];
+
+function log(msg, type='info') {
+  const el = document.getElementById('log');
+  el.style.display = 'block';
+  el.innerHTML += `<div class="${type}">${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+async function ghFetch(path) {
+  const token = document.getElementById('token').value.trim();
+  const res = await fetch('https://api.github.com/' + path, {
+    headers: {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+async function saveFile(path, content, sha) {
+  const token = document.getElementById('token').value.trim();
+  const body = {
+    message: 'Auto-update sitemap.xml',
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: BRANCH
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error((await res.json()).message);
+}
+
+async function getFiles(folder) {
+  try {
+    const files = await ghFetch(`repos/${REPO}/contents/${folder}?ref=${BRANCH}`);
+    return Array.isArray(files) ? files.filter(f => f.name.endsWith('.md')) : [];
+  } catch(e) { return []; }
+}
+
+async function getSlugFromFile(file) {
+  try {
+    const r = await fetch(file.download_url);
+    const txt = await r.text();
+    const meta = {};
+    const parts = txt.split('---').filter(Boolean);
+    parts[0].trim().split('\n').forEach(line => {
+      const [k,...v] = line.split(':');
+      if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
+    });
+    return { title: meta.title || file.name, slug: file.name.replace('.md','') };
+  } catch(e) { return null; }
+}
+
+async function generateSitemap() {
+  const token = document.getElementById('token').value.trim();
+  if (!token) { alert('Token енгізіңіз'); return; }
+  document.getElementById('log').innerHTML = '';
+
+  log('▶ Мазмұн жүктелуде...', 'info');
+
+  const [poemFiles, songFiles, researchFiles] = await Promise.all([
+    getFiles('content/poems'),
+    getFiles('content/songs'),
+    getFiles('content/research')
+  ]);
+
+  log(`✓ Өлеңдер: ${poemFiles.length}`, 'ok');
+  log(`✓ Әндер: ${songFiles.length}`, 'ok');
+  log(`✓ Зерттеулер: ${researchFiles.length}`, 'ok');
+
+  // Sitemap XML жасау
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Басты бет -->
+  <url>
+    <loc>${BASE_URL}/</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Өлеңдер -->
+  <url>
+    <loc>${BASE_URL}/#poetry</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Әндер -->
+  <url>
+    <loc>${BASE_URL}/#music</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Зерттеулер -->
+  <url>
+    <loc>${BASE_URL}/#research</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Автор туралы -->
+  <url>
+    <loc>${BASE_URL}/#about</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Галерея -->
+  <url>
+    <loc>${BASE_URL}/#gallery</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+`;
+
+  // Өлеңдер
+  if (poemFiles.length) {
+    xml += `  <!-- Жеке өлеңдер -->\n`;
+    for (const f of poemFiles) {
+      const slug = f.name.replace('.md','');
+      xml += `  <url>
+    <loc>${BASE_URL}/#poem-${slug}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>\n`;
+    }
+  }
+
+  // Зерттеулер
+  if (researchFiles.length) {
+    xml += `\n  <!-- Жеке зерттеулер -->\n`;
+    for (const f of researchFiles) {
+      const slug = f.name.replace('.md','');
+      xml += `  <url>
+    <loc>${BASE_URL}/#research-${slug}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>\n`;
+    }
+  }
+
+  xml += `\n</urlset>`;
+
+  log('▶ sitemap.xml GitHub-қа жазылуда...', 'info');
+
+  try {
+    // Бар SHA алу
+    let sha = null;
+    try {
+      const existing = await ghFetch(`repos/${REPO}/contents/sitemap.xml?ref=${BRANCH}`);
+      sha = existing.sha;
+    } catch(e) {}
+
+    await saveFile('sitemap.xml', xml, sha);
+    log('✓ sitemap.xml сәтті жаңартылды!', 'ok');
+    log(`✓ Жалпы URL саны: ${7 + poemFiles.length + researchFiles.length}`, 'ok');
+    log(`→ https://ozhaiuly.kz/sitemap.xml`, 'info');
+  } catch(e) {
+    log('✗ Қате: ' + e.message, 'err');
+  }
+}
+</script>
+</body>
+</html>

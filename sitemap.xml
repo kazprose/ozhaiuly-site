@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Басты бет -->
+  <url>
+    <loc>https://ozhaiuly.kz/</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="kk" href="https://ozhaiuly.kz/"/>
+  </url>
+
+  <!-- Өлеңдер -->
+  <url>
+    <loc>https://ozhaiuly.kz/#poetry</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Әндер -->
+  <url>
+    <loc>https://ozhaiuly.kz/#music</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Зерттеулер -->
+  <url>
+    <loc>https://ozhaiuly.kz/#research</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Автор туралы -->
+  <url>
+    <loc>https://ozhaiuly.kz/#about</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Галерея -->
+  <url>
+    <loc>https://ozhaiuly.kz/#gallery</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Байланыс -->
+  <url>
+    <loc>https://ozhaiuly.kz/#contact</loc>
+    <lastmod>2024-04-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>

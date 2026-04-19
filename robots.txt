@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Adminпанельді индекстемеу
+Disallow: /admin-panel.html
+Disallow: /admin/
+
+# Sitemap сілтемесі
+Sitemap: https://ozhaiuly.kz/sitemap.xml
