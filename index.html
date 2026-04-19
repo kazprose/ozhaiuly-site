@@ -722,6 +722,14 @@ function setPlayerTitle(i) {
   if (pm) pm.textContent = 'Ықылас Ожайұлы · ' + (t.year || 2024);
 }
 
+function encodeSrc(path) {
+  try {
+    return path.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(decodeURIComponent(seg))).join('/');
+  } catch(e) {
+    return encodeURI(path);
+  }
+}
+
 function selectTrack(i) {
   curTrack = i; playing = true; demoProg = 0;
   setPlayerTitle(i);
@@ -729,11 +737,18 @@ function selectTrack(i) {
   document.getElementById('playBtn').textContent = '⏸';
   const audio = document.getElementById('htmlAudio');
   const t = tracks[i];
-  if (audio && t && t.audio) {
-    audio.src = t.audio;
+  if (audio && t && t.audio && t.audio.length > 8) {
+    const src = encodeSrc(t.audio);
+    audio.src = src;
     audio.load();
-    audio.play().catch(() => startDemo());
-  } else { startDemo(); }
+    audio.play().catch(e => {
+      console.error('[Player] audio.play() failed:', e.name, '-', e.message, '| src:', src);
+      startDemo();
+    });
+  } else {
+    console.warn('[Player] No audio path for track:', t?.title, '| audio:', t?.audio);
+    startDemo();
+  }
   updatePlayerArt();
 }
 
@@ -751,7 +766,20 @@ function togglePlay() {
   playing = !playing;
   document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
   const audio = document.getElementById('htmlAudio');
-  if (audio && audio.src) playing ? audio.play().catch(()=>{}) : audio.pause();
+  if (audio && audio.src && audio.src !== window.location.href) {
+    if (playing) {
+      audio.play().catch(e => {
+        console.error('[Player] togglePlay failed:', e.name, '-', e.message, '| src:', audio.src);
+        startDemo();
+      });
+    } else {
+      audio.pause();
+      clearInterval(demoTimer);
+    }
+  } else {
+    if (playing) startDemo();
+    else clearInterval(demoTimer);
+  }
   renderTracks();
   updatePlayerArt();
 }
