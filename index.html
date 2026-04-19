@@ -647,8 +647,7 @@ async function loadResearchFromGitHub() {
       const txt = await r.text();
       const meta = {};
       const parts = txt.split('---').filter(Boolean);
-      parts[0].trim().split('
-').forEach(line => {
+      parts[0].trim().split('\n').forEach(line => {
         const [k, ...v] = line.split(':');
         if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '');
       });
