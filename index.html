@@ -636,7 +636,7 @@ function setVolume(v) {
 /* ===== RESEARCH ===== */
 const tagNames = {alash:'Алаш', oner:'Өнер', tarih:'Тарих', madeniyet:'Мәдениет', til:'Тіл'};
 
-async function loadResearch() {
+async function loadResearchFromGitHub() {
   try {
     const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/content/research');
     if (!res.ok) throw new Error();
@@ -774,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ===== INIT ===== */
 loadPoems();
 loadTracks();
-loadResearch();
+loadResearchFromGitHub();
 setTimeout(() => {
   document.querySelectorAll('.reveal,.timeline-item').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
