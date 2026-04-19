@@ -312,6 +312,7 @@ footer{background:var(--bg);padding:40px 48px;border-top:1px solid var(--border)
       <button class="filter-btn" onclick="filterPoems('tabigat',this)">Табиғат</button>
     </div>
     <div class="poems-grid" id="poemsGrid"><div style="padding:32px;color:var(--text3);font-size:14px">Жүктелуде...</div></div>
+    <div id="poemsPagination" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:40px;flex-wrap:wrap"></div>
   </div>
 </section>
 
@@ -454,15 +455,26 @@ async function loadPoems() {
 }
 
 const catNames = {lirika:'Лирика', filosofia:'Философия', tarihi:'Тарихи', tabigat:'Табиғат'};
+const POEMS_PER_PAGE = 8;
+let currentList = [];
+let currentPage = 1;
 
-function renderPoems(list) {
+function renderPoems(list, page) {
+  currentList = list;
+  currentPage = page || getPageFromHash() || 1;
   const g = document.getElementById('poemsGrid');
   if (!g) return;
   if (!list.length) {
     g.innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер жоқ.</div>';
+    document.getElementById('poemsPagination').innerHTML = '';
     return;
   }
-  g.innerHTML = list.map(p => {
+  const totalPages = Math.ceil(list.length / POEMS_PER_PAGE);
+  if (currentPage > totalPages) currentPage = 1;
+  const start = (currentPage - 1) * POEMS_PER_PAGE;
+  const pageItems = list.slice(start, start + POEMS_PER_PAGE);
+
+  g.innerHTML = pageItems.map(p => {
     const slug = p._slug || toSlug(p.title || '');
     const catLabel = catNames[p.category] || p.category || '';
     const excerpt = (p.content||'').split('\n').slice(0,2).join('<br>');
@@ -479,12 +491,58 @@ function renderPoems(list) {
       </div>
     </a>`;
   }).join('');
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const el = document.getElementById('poemsPagination');
+  if (!el || totalPages <= 1) { if(el) el.innerHTML=''; return; }
+  const btnStyle = `style="min-width:36px;height:36px;padding:0 10px;border:1px solid var(--border);background:none;color:var(--text2);font-family:var(--sans);font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;"`;
+  const activeBtnStyle = `style="min-width:36px;height:36px;padding:0 10px;border:1px solid var(--gold);background:rgba(201,168,76,0.12);color:var(--gold);font-family:var(--sans);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;"`;
+
+  let html = '';
+  // Prev
+  if (currentPage > 1)
+    html += `<button ${btnStyle} onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'" onclick="goToPage(${currentPage-1})">←</button>`;
+
+  // Page numbers: show up to 5 around current
+  const range = 2;
+  const start = Math.max(1, currentPage - range);
+  const end   = Math.min(totalPages, currentPage + range);
+  if (start > 1) html += `<button ${btnStyle} onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'" onclick="goToPage(1)">1</button>`;
+  if (start > 2) html += `<span style="color:var(--text3);padding:0 4px">…</span>`;
+  for (let p = start; p <= end; p++) {
+    if (p === currentPage)
+      html += `<button ${activeBtnStyle}>${p}</button>`;
+    else
+      html += `<button ${btnStyle} onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'" onclick="goToPage(${p})">${p}</button>`;
+  }
+  if (end < totalPages - 1) html += `<span style="color:var(--text3);padding:0 4px">…</span>`;
+  if (end < totalPages) html += `<button ${btnStyle} onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+
+  // Next
+  if (currentPage < totalPages)
+    html += `<button ${btnStyle} onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'" onclick="goToPage(${currentPage+1})">→</button>`;
+
+  el.innerHTML = html;
+}
+
+function goToPage(p) {
+  window.location.hash = '#poetry?page=' + p;
+  renderPoems(currentList, p);
+  document.getElementById('poetry').scrollIntoView({behavior:'smooth'});
+}
+
+function getPageFromHash() {
+  const m = window.location.hash.match(/[?&]page=(\d+)/);
+  return m ? parseInt(m[1]) : 1;
 }
 
 function filterPoems(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderPoems(cat === 'all' ? allPoems : allPoems.filter(p => p.category === cat));
+  renderPoems(cat === 'all' ? allPoems : allPoems.filter(p => p.category === cat), 1);
 }
 
 // Модаль жабылып қалды — жеке бетке бағытталады
