@@ -100,7 +100,7 @@ section{padding:100px 48px}
 .filter-btn{padding:6px 16px;background:transparent;border:1px solid var(--border);color:var(--text3);font-size:12px;letter-spacing:1px;cursor:pointer;font-family:var(--sans);transition:all 0.3s;border-radius:1px}
 .filter-btn.active,.filter-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.05)}
 .poems-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border)}
-.poem-card{background:var(--bg);padding:32px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden}
+.poem-card{background:var(--bg);padding:32px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;display:block;text-decoration:none;color:inherit}
 .poem-card:hover{background:var(--bg3)}
 .poem-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--gold);transition:height 0.4s}
 .poem-card:hover::before{height:100%}
@@ -437,6 +437,7 @@ async function loadPoems() {
         if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
       });
       meta.content = (parts[1]||'').trim();
+      meta._slug = f.name.replace('.md',''); // файл атауынан slug алу
       return meta;
     }));
     renderPoems(allPoems);
@@ -446,23 +447,32 @@ async function loadPoems() {
   }
 }
 
+const catNames = {lirika:'Лирика', filosofia:'Философия', tarihi:'Тарихи', tabigat:'Табиғат'};
+
 function renderPoems(list) {
   const g = document.getElementById('poemsGrid');
   if (!g) return;
-  if (!list.length) { g.innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер жоқ.</div>'; return; }
-  g.innerHTML = list.map(p => `
-    <div class="poem-card"
-      data-category="${p.category||''}"
-      data-content="${encodeURIComponent(p.content||'')}"
-      data-title="${encodeURIComponent(p.title||'')}"
-      data-year="${p.year||''}"
-      data-cat="${p.category||''}"
-      onclick="openPoem(this)">
-      <div class="poem-cat">${p.category||''}</div>
+  if (!list.length) {
+    g.innerHTML = '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Өлеңдер жоқ.</div>';
+    return;
+  }
+  g.innerHTML = list.map(p => {
+    const slug = p._slug || toSlug(p.title || '');
+    const catLabel = catNames[p.category] || p.category || '';
+    const excerpt = (p.content||'').split('\n').slice(0,2).join('<br>');
+    return `
+    <a class="poem-card"
+       href="/poems/${slug}.html"
+       data-category="${p.category||''}">
+      <div class="poem-cat">${catLabel}</div>
       <div class="poem-title">${p.title||''}</div>
-      <div class="poem-excerpt">${(p.content||'').split('\n').slice(0,2).join('<br>')}</div>
-      <div class="poem-meta"><span class="poem-year">${p.year||''}</span><span class="poem-arrow">→</span></div>
-    </div>`).join('');
+      <div class="poem-excerpt">${excerpt}</div>
+      <div class="poem-meta">
+        <span class="poem-year">${p.year||''}</span>
+        <span class="poem-arrow">→</span>
+      </div>
+    </a>`;
+  }).join('');
 }
 
 function filterPoems(cat, btn) {
@@ -471,21 +481,25 @@ function filterPoems(cat, btn) {
   renderPoems(cat === 'all' ? allPoems : allPoems.filter(p => p.category === cat));
 }
 
+// Модаль жабылып қалды — жеке бетке бағытталады
 function openPoem(card) {
-  const title = decodeURIComponent(card.dataset.title);
-  const content = decodeURIComponent(card.dataset.content);
-  document.getElementById('readerContent').innerHTML = `
-    <div class="reader-cat">${card.dataset.cat}</div>
-    <h1 class="reader-title">${title}</h1>
-    <div class="reader-year">${card.dataset.year} · Ықылас Ожайұлы</div>
-    <div class="reader-poem">${content.replace(/\n/g,'<br>')}</div>`;
-  document.getElementById('readerModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  const href = card.getAttribute('href');
+  if (href) window.location.href = href;
 }
 
 function closeReader() {
   document.getElementById('readerModal').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+// slug жасаушы (adminпанельмен бірдей)
+function toSlug(str) {
+  return str.toLowerCase()
+    .replace(/ғ/g,'g').replace(/қ/g,'k').replace(/ң/g,'n')
+    .replace(/ү/g,'u').replace(/ұ/g,'u').replace(/ө/g,'o')
+    .replace(/ә/g,'a').replace(/і/g,'i').replace(/ш/g,'sh')
+    .replace(/щ/g,'sh').replace(/ч/g,'ch').replace(/ж/g,'zh')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 
 /* ===== TRACKS ===== */
@@ -623,47 +637,8 @@ const articles = [
   {tag:'Алаш',title:'Ахмет Байтұрсынов: тіл реформаторы',excerpt:'Байтұрсыновтың қазақ алфавитіне қосқан тарихи үлесі.',date:'2022 · Қыркүйек',read:'18 мин'}
 ];
 
-async function renderArticles() {
-  try {
-    const res = await fetch(
-      'https://api.github.com/repos/' + REPO + '/contents/content/research'
-    );
-    if (!res.ok) throw new Error();
-    const files = await res.json();
-    if (!Array.isArray(files) || !files.length) throw new Error();
-
-    const articles = await Promise.all(files.map(async f => {
-      const r = await fetch(f.download_url);
-      const txt = await r.text();
-      const meta = {};
-      const parts = txt.split('---').filter(Boolean);
-      parts[0].trim().split('\n').forEach(line => {
-        const [k,...v] = line.split(':');
-        if (k) meta[k.trim()] = v.join(':').trim().replace(/^"|"$/g,'');
-      });
-      meta._body = (parts[1]||'').trim();
-      return meta;
-    }));
-
-    document.getElementById('articlesGrid').innerHTML = articles.map(a => `
-      <div class="article-card reveal">
-        <span class="article-tag">${a.tag||'Мәдениет'}</span>
-        <div class="article-title">${a.title||''}</div>
-        <div class="article-excerpt">${(a._body||'').split('\n')[0]||''}</div>
-        <div class="article-meta">
-          <span class="article-date">${a.year||2024}</span>
-          <span class="article-read">${a.read_time||'10'} мин оқу →</span>
-        </div>
-      </div>`).join('');
-
-    document.querySelectorAll('.reveal').forEach(el => {
-      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
-    });
-  } catch(e) {
-    document.getElementById('articlesGrid').innerHTML =
-      '<div style="padding:32px;color:var(--text3);grid-column:1/-1">Зерттеулер қосылмаған.</div>';
-  }
-}  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
+function renderArticles() {
+  document.getElementById('articlesGrid').innerHTML = articles.map(a => `
     <div class="article-card reveal">
       <span class="article-tag">${a.tag}</span>
       <div class="article-title">${a.title}</div>
