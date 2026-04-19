@@ -2,6 +2,7 @@
 title: "«Дін таласы»"
 tag: "madeniyet"
 read_time: "3"
+hero_image: "https://adebiportal.kz/storage/tmp/resize/news/1200_0_kv39QONPUYFHj389eWgGQiuu1XhLBRvCft01uOlh.jpg"
 meta_desc: "Тау тұлға танымының бір парасы осы аудармада жатқанға ұқсайды. Бұдан бір ғасыр ілкідегі Бөкейханов тәржімасы бүгін тарихқа айналды."
 keywords: "Ықылас Ожайұлы, философия"
 ---
