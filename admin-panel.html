@@ -221,14 +221,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     <div class="login-sub">Басқару панелі</div>
     <div class="login-ornament"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
     <label class="field-label">Пайдаланушы аты</label>
-    <input class="field-input" id="loginUser" type="text" placeholder="admin" autocomplete="username">
-    <label class="field-label">GitHub Token</label>
-    <input class="field-input" id="loginToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="current-password">
-    <div class="login-hint">
-      GitHub Personal Access Token — <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> сайтынан алыңыз. <strong>repo</strong> рұқсаты болуы керек.
+    <input class="field-input" id="loginUser" type="text" placeholder="admin / editor" autocomplete="username" oninput="onUserInput()">
+    <label class="field-label">Пароль</label>
+    <input class="field-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div id="tokenSection" style="display:none">
+      <label class="field-label" style="margin-top:12px">GitHub Token</label>
+      <input class="field-input" id="loginToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <div class="login-hint">
+        <strong>repo</strong> рұқсаты бар Personal Access Token — <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>
+      </div>
     </div>
-    <button class="btn-full" onclick="doLogin()">Кіру →</button>
-    <div class="login-error" id="loginError">Token немесе пайдаланушы аты қате</div>
+    <button class="btn-full" onclick="doLogin()" style="margin-top:20px">Кіру →</button>
+    <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
@@ -679,25 +683,65 @@ const BRANCH = 'main';
 let GH_TOKEN = '';
 let GH_USER = '';
 let pendingDelete = null;
+let currentRole = '';
+
+// SHA-256 хэштер: admin=OzhaiAdmin2026!  editor=OzhaiEdit2026!
+const USERS = {
+  admin:  '5d2e503a18544e076b6ddf984262f97688027b417cfa4936154edb612427e6cb',
+  editor: '74eb671ed3d5d92dbb89bfcc694e3c42dbffa78b91792390eaf5b52bb5f2e463'
+};
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function onUserInput() {
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  document.getElementById('tokenSection').style.display = u === 'admin' ? 'block' : 'none';
+}
 
 // ===== AUTH =====
-function doLogin() {
-  const user = document.getElementById('loginUser').value.trim();
-  const token = document.getElementById('loginToken').value.trim();
-  if (!token || !user) { showLoginError('Барлық өрістерді толтырыңыз'); return; }
-  GH_TOKEN = token;
-  GH_USER = user;
-  localStorage.setItem('cms_token', token);
-  localStorage.setItem('cms_user', user);
+async function doLogin() {
+  const user  = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  const token = document.getElementById('loginToken')?.value.trim() || '';
+
+  if (!user || !pass) { showLoginError('Барлық өрістерді толтырыңыз'); return; }
+  if (!USERS[user])   { showLoginError('Пайдаланушы табылмады'); return; }
+
+  const hash = await sha256(pass);
+  if (hash !== USERS[user]) { showLoginError('Пароль қате'); return; }
+
+  currentRole = user;
+
+  if (user === 'admin') {
+    if (!token) { showLoginError('Admin үшін GitHub Token міндетті'); return; }
+    GH_TOKEN = token;
+    GH_USER  = 'kazprose';
+    localStorage.setItem('cms_token', token);
+  } else {
+    const stored = localStorage.getItem('cms_token');
+    if (!stored) { showLoginError('Алдымен Admin кіруі керек (token сақталмаған)'); return; }
+    GH_TOKEN = stored;
+    GH_USER  = 'kazprose';
+  }
+
+  localStorage.setItem('cms_role', currentRole);
+  localStorage.setItem('cms_user', GH_USER);
   startApp();
 }
 
 function doLogout() {
-  localStorage.removeItem('cms_token');
+  localStorage.removeItem('cms_role');
   localStorage.removeItem('cms_user');
-  GH_TOKEN = ''; GH_USER = '';
+  GH_TOKEN = ''; GH_USER = ''; currentRole = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginToken').value = '';
+  document.getElementById('tokenSection').style.display = 'none';
 }
 
 function showLoginError(msg) {
@@ -709,11 +753,14 @@ function showLoginError(msg) {
 // Auto-login
 window.addEventListener('DOMContentLoaded', () => {
   const t = localStorage.getItem('cms_token');
-  const u = localStorage.getItem('cms_user');
-  if (t && u) {
-    GH_TOKEN = t; GH_USER = u;
+  const r = localStorage.getItem('cms_role');
+  if (t && r) {
+    GH_TOKEN = t; GH_USER = 'kazprose'; currentRole = r;
     startApp();
   }
+  document.getElementById('loginPass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
   document.getElementById('loginToken').addEventListener('keydown', e => {
     if (e.key === 'Enter') doLogin();
   });
@@ -722,7 +769,17 @@ window.addEventListener('DOMContentLoaded', () => {
 function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  applyRole();
   loadAllData();
+}
+
+function applyRole() {
+  const isAdmin = currentRole === 'admin';
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = isAdmin ? '' : 'none';
+  });
+  const badge = document.querySelector('.sidebar-logo-sub');
+  if (badge) badge.textContent = isAdmin ? 'Басқару панелі · Admin' : 'Басқару панелі · Editor';
 }
 
 // ===== GITHUB API =====
@@ -868,7 +925,7 @@ function renderPoemsTable() {
       <td>${p.year || '—'}</td>
       <td><div class="action-btns">
         <button class="btn-outline btn-sm" onclick="editPoem('${p._path}')">Өзгерту</button>
-        <button class="btn-danger" onclick="askDelete('${p._path}','${p._sha}','${p.title}')">Жою</button>
+        ${currentRole==='admin'?`<button class="btn-danger" onclick="askDelete('${p._path}','${p._sha}','${p.title}')">Жою</button>`:''}
       </div></td>
     </tr>`).join('');
 }
@@ -1100,7 +1157,7 @@ function renderSongsTable() {
       <td>${s.duration || '—'}</td>
       <td><div class="action-btns">
         <button class="btn-outline btn-sm" onclick="editSong('${s._path}')">Өзгерту</button>
-        <button class="btn-danger" onclick="askDelete('${s._path}','${s._sha}','${s.title}')">Жою</button>
+        ${currentRole==='admin'?`<button class="btn-danger" onclick="askDelete('${s._path}','${s._sha}','${s.title}')">Жою</button>`:''}
       </div></td>
     </tr>`).join('');
 }
@@ -1189,7 +1246,7 @@ function renderResearchTable() {
       <td>${r.read_time || '—'} мин</td>
       <td><div class="action-btns">
         <button class="btn-outline btn-sm" onclick="editResearch('${r._path}')">Өзгерту</button>
-        <button class="btn-danger" onclick="askDelete('${r._path}','${r._sha}','${r.title}')">Жою</button>
+        ${currentRole==='admin'?`<button class="btn-danger" onclick="askDelete('${r._path}','${r._sha}','${r.title}')">Жою</button>`:''}
       </div></td>
     </tr>`).join('');
 }
@@ -1446,6 +1503,7 @@ loadMore();
 
 // ===== DELETE =====
 function askDelete(path, sha, title) {
+  if (currentRole !== 'admin') { showToast('Жою тек Admin үшін рұқсат', 'error'); return; }
   pendingDelete = { path, sha };
   document.getElementById('confirmTitle').textContent = '«' + title + '» жоюды растаңыз';
   document.getElementById('confirmText').textContent = 'Бұл файл GitHub-тан мүлдем өшіріледі. Кері қайтару мүмкін емес.';
@@ -1680,7 +1738,7 @@ function renderGalleryPhotos() {
   grid.innerHTML = galleryPhotos.map(f =>
     `<div class="photo-admin-item">
       <img src="${f.download_url}" alt="${f.name}" loading="lazy">
-      <button class="photo-admin-delete" onclick="deletePhoto('${f.path}','${f.sha}')" title="Жою">✕</button>
+      ${currentRole==='admin'?`<button class="photo-admin-delete" onclick="deletePhoto('${f.path}','${f.sha}')" title="Жою">✕</button>`:''}
     </div>`
   ).join('');
 }
@@ -1736,6 +1794,7 @@ async function doUploadPhoto() {
 }
 
 async function deletePhoto(path, sha) {
+  if (currentRole !== 'admin') { showToast('Жою тек Admin үшін рұқсат', 'error'); return; }
   if (!confirm('Суретті жою?\n' + path)) return;
   try {
     await deleteFile(path, sha);
@@ -1765,7 +1824,7 @@ function renderVideosTable() {
       <td>${v.location||'—'}</td>
       <td>${v.year||'—'}</td>
       <td><div class="action-btns">
-        <button class="btn-danger btn-sm" onclick="deleteVideo('${v._path}','${v._sha}')">✕ Жою</button>
+        ${currentRole==='admin'?`<button class="btn-danger btn-sm" onclick="deleteVideo('${v._path}','${v._sha}')">✕ Жою</button>`:''}
       </div></td>
     </tr>`).join('');
 }
@@ -1793,6 +1852,7 @@ async function addVideo() {
 }
 
 async function deleteVideo(path, sha) {
+  if (currentRole !== 'admin') { showToast('Жою тек Admin үшін рұқсат', 'error'); return; }
   if (!confirm('Видеоны жою?')) return;
   try {
     await deleteFile(path, sha);
