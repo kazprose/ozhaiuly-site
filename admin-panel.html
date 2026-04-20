@@ -287,6 +287,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       </div>
     </nav>
     <div class="sidebar-footer">
+      <button class="logout-btn" onclick="clearSiteCache()" style="margin-bottom:8px;border-color:var(--border);color:var(--text3)" title="Бас беттің GitHub API кэшін тазарту">⟳ Кэшті жаңарту</button>
       <button class="logout-btn" onclick="doLogout()">Шығу</button>
     </div>
   </div>
@@ -736,6 +737,15 @@ async function doLogin() {
   localStorage.setItem('cms_role', currentRole);
   localStorage.setItem('cms_user', GH_USER);
   startApp();
+}
+
+function clearSiteCache() {
+  const cacheKeys = ['poems', 'songs', 'research'];
+  cacheKeys.forEach(k => {
+    localStorage.removeItem(k);
+    localStorage.removeItem(k + '_t');
+  });
+  showToast('Кэш тазартылды ✓ — бас бет жаңа мазмұнды жүктейді');
 }
 
 function doLogout() {
