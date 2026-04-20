@@ -1651,12 +1651,12 @@ async function uploadHeroImage(input) {
   reader.onload = async (e) => {
     const ext = file.name.split('.').pop().toLowerCase();
     const fname = 'hero-' + Date.now() + '.' + ext;
-    const path = 'images/' + fname;
+    const path = 'images/research/' + fname;
     try {
       await saveFile(path, base64Data(e.target.result), null);
-      const url = 'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' + path;
+      const url = '/images/research/' + fname;
       document.getElementById('researchHeroImage').value = url;
-      statusEl.textContent = '✓ Жүктелді: ' + fname;
+      statusEl.textContent = '✓ Жүктелді: /images/research/' + fname;
       statusEl.style.color = 'var(--gold)';
     } catch(err) {
       statusEl.textContent = '✗ Қате: ' + (err.message || err);
